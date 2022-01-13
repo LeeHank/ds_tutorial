@@ -1,0 +1,161 @@
+# JSON & APIs  
+
+## Load JSON data
+
+* 這邊先介紹JSON的三種組成方式：  
+
+### Record Orientation  
+
+* record就是observation的意思，就是row的意思  
+* 所以把dataframe的一個一個row，組成的json，就叫row orientation/ record orientation 
+* 這是最常看到的json格式，也可以說他是list of dictionaries  
+
+```
+[
+  {
+    "name": "Hank",
+    "age": 33,
+    "height": 185
+  },
+  {
+    "name": "Pinpin"
+    "age": 33,
+    "height": 160
+  },
+  {
+    "name": "Zoe",
+    "age": 37,
+    "height": 166
+  }
+]
+```
+
+### Column Orientation  
+
+* 這就是用dataframe的一個一個column，所組成的json，所以叫column orientation  
+* 你也可以稱它為dictionary of lists  
+
+```
+{
+  "name": ["Hank", "Pinpin", "Zoe"],
+  "age": [33, 33, 37],
+  "height": [185, 160, 166]
+}
+```
+
+### Split Orientation  
+
+* 這就是把dataframe的column_name(簡稱column), row_name(簡稱index), value(簡稱data)這三塊分開放的格式：  
+
+```
+{
+  "column": ["name", "age", "height"],
+  "index": [0, 1, 2],
+  "data": [
+    ["Hank", 33, 185],
+    ["Pinpin", 33, 160],
+    ["Zoe", 37, 166]
+  ]
+}
+```
+
+* 如果你已經有.json檔了，可以這樣讀檔：  
+  * 對index orientation 或 column orientation來說： `pd.read_json("data.json")`  
+  * 對split orientation來說： `pd.read_json("data.json", orient = "split")`    
+
+```{python}
+import pandas as pd
+```
+
+```{python eval = FALSE}
+# Load the daily report to a data frame
+pop_in_shelters = pd.read_json("dhs_daily_report.json")
+
+# View summary stats about pop_in_shelters
+print(pop_in_shelters.describe())
+```
+
+## Introduction to APIs  
+
+* 剛剛我們是直接開啟local端的.json檔，那現在要用API，去開啟server那邊的.json檔，就差在這而已  
+* 所以這邊要學的，就是如何透過server端的API，去get遠端的資料，而遠端的資料，通常都是用JSON在儲存的，所以就是讀遠端的.json檔的意思而已  
+* 我們將使用`request`這個套件來處理，以get method舉例，會寫成： `response = requests.get(url_string, params, headers,...)`  
+* 其中，各parameter的意思如下：  
+  * url_string: 就填入該API的url，為字串格式，例如："https://172.16.99.233:8000/predict"  
+  * params: 為dictionary格式，填入客製化的參數(如果原本要get的那個url所用的function，不需要你填參數，那這個argument就不用下)。例如：剛剛的url_string如果是讓你去get一筆data，然後參數要你下location="xxx"，好幫你filter出data中location == "xxx"的資料給你，那這時的params就要寫成`params = {"location": "xxx"}`  
+  * headers: 填入authentication資訊，為dictionary格式  
+
+* output的object: respone，包含data和metadata兩部分  
+  * `response.json()`會把get下來的JSON資料，轉成dictionary給你。所以你可以用`pd.DataFrame()`來parse他。記得，不要用`pd.read_json()`，因為後者吃的是字串，但你現在的資料是dictionary了  
+
+* 現在來練習吧，課程中使用"Yelp Business Search API for cafes in New York City"這個API，完整流程示範如以下的code，但因為認證的key已經過期，現在無法操作了：  
+
+```{python eval = FALSE}
+import requests
+
+api_url = "https://api.yelp.com/v3/businesses/search"
+params = {'location': 'NYC', 'term': 'cafe'}
+headers = {
+  'Authorization': 'Bearer mhmt6jn3SFPVC1u6pfwgHWQvsa1wmWvCpKRtFGRYlo4mzA14SisQiDjyygsGMV2Dm7tEsuwdC4TYSA0Ai_GQTjKf9d5s5XLSNfQqdg1oy7jcBBh1i7iQUZBujdA_XHYx'
+}
+
+# Get data about NYC cafes from the Yelp API
+response = requests.get(api_url, 
+                headers=headers, 
+                params=params)
+
+# Extract JSON data from the response
+data = response.json()
+
+# Load data to a data frame
+cafes = pd.DataFrame(data["businesses"])
+
+# View the data's dtypes
+print(cafes.dtypes)
+
+```
+
+* 那沒關係，反正只是要練習從遠端拉.json資料，那我可以改用爬蟲的方式來練習  
+* 我從pchome的網站中，搜尋商品後，發現他show給你的網頁，背後是讀這個路徑的.json資料："http://ecshweb.pchome.com.tw/search/v3.3/all/results?q=sony&page=1&sort=rnk/dc"  
+* 那太棒拉，我就get他就好，而且此時不用下parameter了，因為他已經結合在url裡面，也不用下header，因為不需要認證  
+
+```{python}
+import requests 
+url = "http://ecshweb.pchome.com.tw/search/v3.3/all/results?q=sony&page=1&sort=rnk/dc"
+response = requests.get(url)
+data = response.json()
+data
+```
+
+* 看到這個JSON包含超多資訊，簡要一點看，他包含哪幾大塊：  
+
+```{python}
+data.keys()
+```
+
+* 了解，那我要的，其實只是"prods"的部分，看一下這一塊的資料  
+
+```{python}
+data["prods"][:2]
+```
+
+* 很明顯的是一個record orientation(或說，list of dictionaries)的格式，那我直接用`pd.DataFrame()`就可以把他parse成dataframe了  
+
+```{python}
+pd.DataFrame(data["prods"]).head()
+```
+
+* 搞定拉！  
+
+### Get data from APIs  
+
+* 從這邊以下的資訊，就先不整理了，因為範例我都無法reproduce(因為認證的key已經不能用了)  
+* 我計畫之後在爬蟲的主題(緯育+Yotta)，把這些東西處理好，畢竟爬蟲時最容易碰到這些問題  
+
+### Set API parameters  
+
+### Set request headers  
+
+## Working with nested JSON's  
+
+## Combining multiple datasets  

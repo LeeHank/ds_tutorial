@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 3 Database | Data Science Tutorial</title>
+<meta name="author" content="Hank Lee">
+<meta name="description" content="這一節只講如何連SQLite，他是把DB的檔存在local computer上的作法，所以使用上，等於是直接去開啟此DB的檔，然後開啟後裡面有多個表格，就可以開始單表格查詢或多表格合併了 使用的package是sqlalchemy，就先把他想成R的RJDBC，此套件可以連各種DB，只是這堂課是介紹連SQLite而已 但實際上，工作上我需要的教我連sql...">
+<meta name="generator" content="bookdown 0.24 with bs4_book()">
+<meta property="og:title" content="Chapter 3 Database | Data Science Tutorial">
+<meta property="og:type" content="book">
+<meta property="og:description" content="這一節只講如何連SQLite，他是把DB的檔存在local computer上的作法，所以使用上，等於是直接去開啟此DB的檔，然後開啟後裡面有多個表格，就可以開始單表格查詢或多表格合併了 使用的package是sqlalchemy，就先把他想成R的RJDBC，此套件可以連各種DB，只是這堂課是介紹連SQLite而已 但實際上，工作上我需要的教我連sql...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 3 Database | Data Science Tutorial">
+<meta name="twitter:description" content="這一節只講如何連SQLite，他是把DB的檔存在local computer上的作法，所以使用上，等於是直接去開啟此DB的檔，然後開啟後裡面有多個表格，就可以開始單表格查詢或多表格合併了 使用的package是sqlalchemy，就先把他想成R的RJDBC，此套件可以連各種DB，只是這堂課是介紹連SQLite而已 但實際上，工作上我需要的教我連sql...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="bs4_style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Data Science Tutorial</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">About</a></li>
+<li class="book-part">Import Data</li>
+<li><a class="" href="write-and-read-files.html"><span class="header-section-number">1</span> Write and read files</a></li>
+<li><a class="" href="flat-files.html"><span class="header-section-number">2</span> Flat Files</a></li>
+<li><a class="active" href="database.html"><span class="header-section-number">3</span> Database</a></li>
+<li><a class="" href="json-apis.html"><span class="header-section-number">4</span> JSON &amp; APIs</a></li>
+<li class="book-part">Numpy</li>
+<li><a class="" href="numpy-basics.html"><span class="header-section-number">5</span> numpy basics</a></li>
+<li class="book-part">Pandas</li>
+<li><a class="" href="pandas_cheatsheet.html"><span class="header-section-number">6</span> pandas_cheatsheet</a></li>
+<li><a class="" href="pandas-basics.html"><span class="header-section-number">7</span> Pandas basics</a></li>
+<li><a class="" href="join-data.html"><span class="header-section-number">8</span> Join data</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/LeeHank/ds_tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="database" class="section level1" number="3">
+<h1>
+<span class="header-section-number">3</span> Database<a class="anchor" aria-label="anchor" href="#database"><i class="fas fa-link"></i></a>
+</h1>
+<ul>
+<li>這一節只講如何連SQLite，他是把DB的檔存在local computer上的作法，所以使用上，等於是直接去開啟此DB的檔，然後開啟後裡面有多個表格，就可以開始單表格查詢或多表格合併了<br>
+</li>
+<li>使用的package是<code>sqlalchemy</code>，就先把他想成R的<code>RJDBC</code>，此套件可以連各種DB，只是這堂課是介紹連SQLite而已<br>
+</li>
+<li>但實際上，工作上我需要的教我連sql server或oracle，而不是這種SQLite，所以這一節我就放個連SQLite的範例，其他我就不想整理了(這一節其他內容就是一直教SQL語法而已)，等另個課程(專門講連db的)，再好好整理連各DB的方式</li>
+</ul>
+<div id="建立連線用sqlalchemy.create_engine" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> 建立連線用<code>sqlalchemy.create_engine()</code><a class="anchor" aria-label="anchor" href="#%E5%BB%BA%E7%AB%8B%E9%80%A3%E7%B7%9A%E7%94%A8sqlalchemy.create_engine"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb42"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="database.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import sqlalchemy's create_engine() function</span></span>
+<span id="cb42-2"><a href="database.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy <span class="im">import</span> create_engine</span>
+<span id="cb42-3"><a href="database.html#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="database.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the database engine</span></span>
+<span id="cb43-2"><a href="database.html#cb43-2" aria-hidden="true" tabindex="-1"></a>engine <span class="op">=</span> create_engine(<span class="st">'sqlite:///data/data.db'</span>)</span>
+<span id="cb43-3"><a href="database.html#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="database.html#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the tables in the database</span></span>
+<span id="cb43-5"><a href="database.html#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(engine.table_names())</span>
+<span id="cb43-6"><a href="database.html#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ['boro_census', 'hpd311calls', 'weather']</span></span>
+<span id="cb43-7"><a href="database.html#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb43-8"><a href="database.html#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;string&gt;:1: SADeprecationWarning: The Engine.table_names() method is deprecated and will be removed in a future release.  Please refer to Inspector.get_table_names(). (deprecated since: 1.4)</span></span></code></pre></div>
+</div>
+<div id="撈資料用pd.read_sqlquery_text-engine" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> 撈資料用<code>pd.read_sql(query_text, engine)</code><a class="anchor" aria-label="anchor" href="#%E6%92%88%E8%B3%87%E6%96%99%E7%94%A8pd.read_sqlquery_text-engine"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>如果我想撈weather資料表的內容，我可以這樣做：</li>
+</ul>
+<div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="database.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a SQL query to load the entire weather table</span></span>
+<span id="cb44-2"><a href="database.html#cb44-2" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb44-3"><a href="database.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="st">select * from weather;</span></span>
+<span id="cb44-4"><a href="database.html#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb44-5"><a href="database.html#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="database.html#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load weather with the SQL query</span></span>
+<span id="cb44-7"><a href="database.html#cb44-7" aria-hidden="true" tabindex="-1"></a>weather <span class="op">=</span> pd.read_sql(query, engine)</span>
+<span id="cb44-8"><a href="database.html#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="database.html#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co"># View the first few rows of data</span></span>
+<span id="cb44-10"><a href="database.html#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(weather.head())</span>
+<span id="cb44-11"><a href="database.html#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        station                         name  latitude  ...  tavg  tmax tmin</span></span>
+<span id="cb44-12"><a href="database.html#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0  USW00094728  NY CITY CENTRAL PARK, NY US  40.77898  ...          52   42</span></span>
+<span id="cb44-13"><a href="database.html#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  USW00094728  NY CITY CENTRAL PARK, NY US  40.77898  ...          48   39</span></span>
+<span id="cb44-14"><a href="database.html#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  USW00094728  NY CITY CENTRAL PARK, NY US  40.77898  ...          48   42</span></span>
+<span id="cb44-15"><a href="database.html#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  USW00094728  NY CITY CENTRAL PARK, NY US  40.77898  ...          51   40</span></span>
+<span id="cb44-16"><a href="database.html#cb44-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  USW00094728  NY CITY CENTRAL PARK, NY US  40.77898  ...          61   50</span></span>
+<span id="cb44-17"><a href="database.html#cb44-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb44-18"><a href="database.html#cb44-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5 rows x 13 columns]</span></span></code></pre></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="flat-files.html"><span class="header-section-number">2</span> Flat Files</a></div>
+<div class="next"><a href="json-apis.html"><span class="header-section-number">4</span> JSON &amp; APIs</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#database"><span class="header-section-number">3</span> Database</a></li>
+<li><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E9%80%A3%E7%B7%9A%E7%94%A8sqlalchemy.create_engine"><span class="header-section-number">3.1</span> 建立連線用sqlalchemy.create_engine()</a></li>
+<li><a class="nav-link" href="#%E6%92%88%E8%B3%87%E6%96%99%E7%94%A8pd.read_sqlquery_text-engine"><span class="header-section-number">3.2</span> 撈資料用pd.read_sql(query_text, engine)</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/LeeHank/ds_tutorial/blob/master/read_db.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/LeeHank/ds_tutorial/edit/master/read_db.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Data Science Tutorial</strong>" was written by Hank Lee. It was last built on 2022-01-14.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

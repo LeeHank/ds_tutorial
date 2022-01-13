@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 1 Write and read files | Data Science Tutorial</title>
+<meta name="author" content="Hank Lee">
+<meta name="description" content="1.1 三部曲架構介紹  在python中，不管是讀or寫file，不像R都是一個function搞定，而是都要以三部曲來完成： f = open(): 打開一個file，命名為f f.write() / f.read(): 讀取或寫入 f.close(): 關閉這個file 那首先要介紹的，就是open這個函數怎麼用。我們可以在console中打”?open”，或是在VS code...">
+<meta name="generator" content="bookdown 0.24 with bs4_book()">
+<meta property="og:title" content="Chapter 1 Write and read files | Data Science Tutorial">
+<meta property="og:type" content="book">
+<meta property="og:description" content="1.1 三部曲架構介紹  在python中，不管是讀or寫file，不像R都是一個function搞定，而是都要以三部曲來完成： f = open(): 打開一個file，命名為f f.write() / f.read(): 讀取或寫入 f.close(): 關閉這個file 那首先要介紹的，就是open這個函數怎麼用。我們可以在console中打”?open”，或是在VS code...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 1 Write and read files | Data Science Tutorial">
+<meta name="twitter:description" content="1.1 三部曲架構介紹  在python中，不管是讀or寫file，不像R都是一個function搞定，而是都要以三部曲來完成： f = open(): 打開一個file，命名為f f.write() / f.read(): 讀取或寫入 f.close(): 關閉這個file 那首先要介紹的，就是open這個函數怎麼用。我們可以在console中打”?open”，或是在VS code...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="bs4_style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Data Science Tutorial</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">About</a></li>
+<li class="book-part">Import Data</li>
+<li><a class="active" href="write-and-read-files.html"><span class="header-section-number">1</span> Write and read files</a></li>
+<li><a class="" href="flat-files.html"><span class="header-section-number">2</span> Flat Files</a></li>
+<li><a class="" href="database.html"><span class="header-section-number">3</span> Database</a></li>
+<li><a class="" href="json-apis.html"><span class="header-section-number">4</span> JSON &amp; APIs</a></li>
+<li class="book-part">Numpy</li>
+<li><a class="" href="numpy-basics.html"><span class="header-section-number">5</span> numpy basics</a></li>
+<li class="book-part">Pandas</li>
+<li><a class="" href="pandas_cheatsheet.html"><span class="header-section-number">6</span> pandas_cheatsheet</a></li>
+<li><a class="" href="pandas-basics.html"><span class="header-section-number">7</span> Pandas basics</a></li>
+<li><a class="" href="join-data.html"><span class="header-section-number">8</span> Join data</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/LeeHank/ds_tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="write-and-read-files" class="section level1" number="1">
+<h1>
+<span class="header-section-number">1</span> Write and read files<a class="anchor" aria-label="anchor" href="#write-and-read-files"><i class="fas fa-link"></i></a>
+</h1>
+<div id="三部曲架構介紹" class="section level2" number="1.1">
+<h2>
+<span class="header-section-number">1.1</span> 三部曲架構介紹<a class="anchor" aria-label="anchor" href="#%E4%B8%89%E9%83%A8%E6%9B%B2%E6%9E%B6%E6%A7%8B%E4%BB%8B%E7%B4%B9"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>
+<p>在python中，不管是讀or寫file，不像R都是一個function搞定，而是都要以三部曲來完成：</p>
+<ul>
+<li>f = open(): 打開一個file，命名為f<br>
+</li>
+<li>f.write() / f.read(): 讀取或寫入<br>
+</li>
+<li>f.close(): 關閉這個file</li>
+</ul>
+</li>
+<li><p>那首先要介紹的，就是open這個函數怎麼用。我們可以在console中打”?open”，或是在VS code 中打入 “open”，然後按住command/ctrl後，以滑鼠點擊open，就可以看到文檔</p></li>
+<li>
+<p>從文檔中，可以看到open的第一個argument是file，這就是他的檔案名稱; 第二個argument為mode，可key入以下選擇：</p>
+<ul>
+<li>‘r’: 打開舊file並讀取(default)<br>
+</li>
+<li>‘w’: 打開舊file，寫檔案，並覆蓋過原舊file<br>
+</li>
+<li>‘x’: 打開新file，寫檔案<br>
+</li>
+<li>‘a’: 打開舊file，接續在之前的最後面，寫檔案(a = append 的意思)<br>
+</li>
+<li>‘b’: binary mode，二元模式，會搭配前面的r/w/x/a來使用，例如mode = ‘wb’，就是以二進位來寫入<br>
+</li>
+<li>‘t’: text mode(default)，就是以一般文字來寫入，會搭配前面的r/w/x/a來使用，例如mode = ‘wt’，就是以文字來寫入</li>
+</ul>
+</li>
+<li><p>接下來，就先demo寫入的幾個mode: ‘x’, ‘a’, 和’w’</p></li>
+</ul>
+</div>
+<div id="file的寫入" class="section level2" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> file的寫入<a class="anchor" aria-label="anchor" href="#file%E7%9A%84%E5%AF%AB%E5%85%A5"><i class="fas fa-link"></i></a>
+</h2>
+<div id="mode-x" class="section level3" number="1.2.1">
+<h3>
+<span class="header-section-number">1.2.1</span> mode = ‘x’<a class="anchor" aria-label="anchor" href="#mode-x"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>首先，我們想寫一個新的file，所以要用mode = ‘x’，作法如下</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="write-and-read-files.html#cb1-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(<span class="bu">file</span> <span class="op">=</span> <span class="st">'data/test1.txt'</span>, mode <span class="op">=</span> <span class="st">'x'</span>)</span>
+<span id="cb1-2"><a href="write-and-read-files.html#cb1-2" aria-hidden="true" tabindex="-1"></a>f.write(<span class="st">"line1"</span>)</span>
+<span id="cb1-3"><a href="write-and-read-files.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5</span></span>
+<span id="cb1-4"><a href="write-and-read-files.html#cb1-4" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div>
+<ul>
+<li><p>就可以看到新增了一個test1.txt檔案，打開來看可以看到裡面就寫著line1</p></li>
+<li><p>接著，我們除了用<code>f.write()</code>外，也可以用<code>f.writelines()</code>，那這時的input就要是個iterable物件(e.g. list)，他就會去iterate裡面的element，一個一個寫入這樣，比如：</p></li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="write-and-read-files.html#cb2-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(<span class="st">"data/test2.txt"</span>, mode <span class="op">=</span> <span class="st">"x"</span>)</span>
+<span id="cb2-2"><a href="write-and-read-files.html#cb2-2" aria-hidden="true" tabindex="-1"></a>f.writelines([<span class="st">"I"</span>, <span class="st">"am"</span>, <span class="st">"tom-hanks"</span>])</span>
+<span id="cb2-3"><a href="write-and-read-files.html#cb2-3" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div>
+<ul>
+<li>寫出來的文件長這樣</li>
+</ul>
+<pre><code>Iamtom-hanks</code></pre>
+<ul>
+<li>可以發現全部黏在一起了<br>
+</li>
+<li>如果要換行，就加上”“就好</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="write-and-read-files.html#cb4-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(<span class="st">"data/test3.txt"</span>, mode <span class="op">=</span> <span class="st">"x"</span>)</span>
+<span id="cb4-2"><a href="write-and-read-files.html#cb4-2" aria-hidden="true" tabindex="-1"></a>f.writelines([<span class="st">"I</span><span class="ch">\n</span><span class="st">"</span>, <span class="st">"am</span><span class="ch">\n</span><span class="st">"</span>, <span class="st">"tom-hanks</span><span class="ch">\n</span><span class="st">"</span>])</span>
+<span id="cb4-3"><a href="write-and-read-files.html#cb4-3" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div>
+<ul>
+<li>結果就會變成</li>
+</ul>
+<pre><code>I
+am
+tom-hanks</code></pre>
+</div>
+<div id="mode-a" class="section level3" number="1.2.2">
+<h3>
+<span class="header-section-number">1.2.2</span> mode = ‘a’<a class="anchor" aria-label="anchor" href="#mode-a"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>現在，我們已經有三個檔案了(test1.txt, test2.txt, test3.txt)，如果，我繼續用mode = ‘x’ 來寫入已存在的檔案，就會報error</li>
+</ul>
+<pre class="python3"><code>f = open('data/test3.txt', mode = 'x')
+f.write("just try it")
+f.close()</code></pre>
+<ul>
+<li><p>所以，對於已經存在的檔案，我們只能選擇mode = ‘w’來覆蓋過去，或是用mode = ’a’ 來append新結果</p></li>
+<li><p>先來試試mode = ‘a’</p></li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="write-and-read-files.html#cb7-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(<span class="st">'data/test3.txt'</span>, mode <span class="op">=</span> <span class="st">'a'</span>)</span>
+<span id="cb7-2"><a href="write-and-read-files.html#cb7-2" aria-hidden="true" tabindex="-1"></a>f.write(<span class="st">"this is new line"</span>)</span>
+<span id="cb7-3"><a href="write-and-read-files.html#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 16</span></span>
+<span id="cb7-4"><a href="write-and-read-files.html#cb7-4" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div>
+<ul>
+<li>結果如下</li>
+</ul>
+<pre><code>I
+am
+tom-hanks
+this is new line</code></pre>
+</div>
+<div id="mode-w" class="section level3" number="1.2.3">
+<h3>
+<span class="header-section-number">1.2.3</span> mode = ‘w’<a class="anchor" aria-label="anchor" href="#mode-w"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>如果以mode = ’w’來寫的話，他會把之前的內容全部清空，然後寫入新內容</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="write-and-read-files.html#cb9-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(<span class="st">'data/test3.txt'</span>, mode <span class="op">=</span> <span class="st">'w'</span>)</span>
+<span id="cb9-2"><a href="write-and-read-files.html#cb9-2" aria-hidden="true" tabindex="-1"></a>f.write(<span class="st">"this is another line"</span>)</span>
+<span id="cb9-3"><a href="write-and-read-files.html#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20</span></span>
+<span id="cb9-4"><a href="write-and-read-files.html#cb9-4" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div>
+<ul>
+<li>結果就變成</li>
+</ul>
+<pre><code>this is another line</code></pre>
+<ul>
+<li>然後，’w’其實是最常用的mode，因為他也可以當’x’來用。就是說，如果你原本沒有test4.txt這個檔案，那你用mode = ’w’時，他會像mode = ’x’一樣，幫你新增這個檔案，然後寫進去</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="write-and-read-files.html#cb11-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(<span class="st">'data/test4.txt'</span>, mode <span class="op">=</span> <span class="st">'w'</span>)</span>
+<span id="cb11-2"><a href="write-and-read-files.html#cb11-2" aria-hidden="true" tabindex="-1"></a>f.write(<span class="st">"Just like mode = 'x'"</span>)</span>
+<span id="cb11-3"><a href="write-and-read-files.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20</span></span>
+<span id="cb11-4"><a href="write-and-read-files.html#cb11-4" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div>
+</div>
+<div id="寫中文記得加上encoding-utf8" class="section level3" number="1.2.4">
+<h3>
+<span class="header-section-number">1.2.4</span> 寫中文，記得加上encoding = ‘utf8’<a class="anchor" aria-label="anchor" href="#%E5%AF%AB%E4%B8%AD%E6%96%87%E8%A8%98%E5%BE%97%E5%8A%A0%E4%B8%8Aencoding-utf8"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>剛剛都是寫入英文文件，如果今天寫中文的話，照預設來走，會報錯(因為預設的編碼方式是’ascii’)，所以要加上encoding = ‘utf8’ (但我用mac寫的時候，不寫encoding也沒報錯，所以應該預設就是utf8)</li>
+</ul>
+<pre class="python3"><code>f = open('data/test_chinese.txt', mode = 'w', encoding = 'utf8')
+f.write("寫中文行不行？")
+f.close</code></pre>
+</div>
+</div>
+<div id="file的讀取" class="section level2" number="1.3">
+<h2>
+<span class="header-section-number">1.3</span> file的讀取<a class="anchor" aria-label="anchor" href="#file%E7%9A%84%E8%AE%80%E5%8F%96"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>讀取的話，就簡單多了，用mode = ’r’就好<br>
+</li>
+<li>而且，mode = ‘r’ 是預設，所以甚至可以不用寫</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="write-and-read-files.html#cb13-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(<span class="st">'data/test4.txt'</span>)</span>
+<span id="cb13-2"><a href="write-and-read-files.html#cb13-2" aria-hidden="true" tabindex="-1"></a>f.read()</span>
+<span id="cb13-3"><a href="write-and-read-files.html#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; "Just like mode = 'x'"</span></span>
+<span id="cb13-4"><a href="write-and-read-files.html#cb13-4" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="index.html">About</a></div>
+<div class="next"><a href="flat-files.html"><span class="header-section-number">2</span> Flat Files</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#write-and-read-files"><span class="header-section-number">1</span> Write and read files</a></li>
+<li><a class="nav-link" href="#%E4%B8%89%E9%83%A8%E6%9B%B2%E6%9E%B6%E6%A7%8B%E4%BB%8B%E7%B4%B9"><span class="header-section-number">1.1</span> 三部曲架構介紹</a></li>
+<li>
+<a class="nav-link" href="#file%E7%9A%84%E5%AF%AB%E5%85%A5"><span class="header-section-number">1.2</span> file的寫入</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#mode-x"><span class="header-section-number">1.2.1</span> mode = ‘x’</a></li>
+<li><a class="nav-link" href="#mode-a"><span class="header-section-number">1.2.2</span> mode = ‘a’</a></li>
+<li><a class="nav-link" href="#mode-w"><span class="header-section-number">1.2.3</span> mode = ‘w’</a></li>
+<li><a class="nav-link" href="#%E5%AF%AB%E4%B8%AD%E6%96%87%E8%A8%98%E5%BE%97%E5%8A%A0%E4%B8%8Aencoding-utf8"><span class="header-section-number">1.2.4</span> 寫中文，記得加上encoding = ‘utf8’</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#file%E7%9A%84%E8%AE%80%E5%8F%96"><span class="header-section-number">1.3</span> file的讀取</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/LeeHank/ds_tutorial/blob/master/write_and_read_file.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/LeeHank/ds_tutorial/edit/master/write_and_read_file.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Data Science Tutorial</strong>" was written by Hank Lee. It was last built on 2022-01-14.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 2 Flat Files | Data Science Tutorial</title>
+<meta name="author" content="Hank Lee">
+<meta name="description" content='2.1 CSV flat files的代表就是csv，他的特色就是資料以plain text的方式做儲存(所以不會有color, bold,等格式) 資料是用delimiter做分隔，像csv就是用逗號做分隔(sep = ",")，其他還可以用tab鍵做分隔(sep = "\t")、空白鍵做分隔(sep = " ")、分號做分隔(sep = ";")等...'>
+<meta name="generator" content="bookdown 0.24 with bs4_book()">
+<meta property="og:title" content="Chapter 2 Flat Files | Data Science Tutorial">
+<meta property="og:type" content="book">
+<meta property="og:description" content='2.1 CSV flat files的代表就是csv，他的特色就是資料以plain text的方式做儲存(所以不會有color, bold,等格式) 資料是用delimiter做分隔，像csv就是用逗號做分隔(sep = ",")，其他還可以用tab鍵做分隔(sep = "\t")、空白鍵做分隔(sep = " ")、分號做分隔(sep = ";")等...'>
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 2 Flat Files | Data Science Tutorial">
+<meta name="twitter:description" content='2.1 CSV flat files的代表就是csv，他的特色就是資料以plain text的方式做儲存(所以不會有color, bold,等格式) 資料是用delimiter做分隔，像csv就是用逗號做分隔(sep = ",")，其他還可以用tab鍵做分隔(sep = "\t")、空白鍵做分隔(sep = " ")、分號做分隔(sep = ";")等...'>
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><link rel="stylesheet" href="bs4_style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Data Science Tutorial</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">About</a></li>
+<li class="book-part">Import Data</li>
+<li><a class="" href="write-and-read-files.html"><span class="header-section-number">1</span> Write and read files</a></li>
+<li><a class="active" href="flat-files.html"><span class="header-section-number">2</span> Flat Files</a></li>
+<li><a class="" href="database.html"><span class="header-section-number">3</span> Database</a></li>
+<li><a class="" href="json-apis.html"><span class="header-section-number">4</span> JSON &amp; APIs</a></li>
+<li class="book-part">Numpy</li>
+<li><a class="" href="numpy-basics.html"><span class="header-section-number">5</span> numpy basics</a></li>
+<li class="book-part">Pandas</li>
+<li><a class="" href="pandas_cheatsheet.html"><span class="header-section-number">6</span> pandas_cheatsheet</a></li>
+<li><a class="" href="pandas-basics.html"><span class="header-section-number">7</span> Pandas basics</a></li>
+<li><a class="" href="join-data.html"><span class="header-section-number">8</span> Join data</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/LeeHank/ds_tutorial">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="flat-files" class="section level1" number="2">
+<h1>
+<span class="header-section-number">2</span> Flat Files<a class="anchor" aria-label="anchor" href="#flat-files"><i class="fas fa-link"></i></a>
+</h1>
+<div id="csv" class="section level2" number="2.1">
+<h2>
+<span class="header-section-number">2.1</span> CSV<a class="anchor" aria-label="anchor" href="#csv"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>flat files的代表就是csv，他的特色就是資料以plain text的方式做儲存(所以不會有color, bold,等格式)<br>
+</li>
+<li>資料是用delimiter做分隔，像csv就是用逗號做分隔(<code>sep = ","</code>)，其他還可以用tab鍵做分隔(<code>sep = "\t"</code>)、空白鍵做分隔(<code>sep = " "</code>)、分號做分隔(<code>sep = ";"</code>)等<br>
+</li>
+<li>但無論如何，你在<code>pandas</code>裡面，都是用<code>pd.read_csv(data, sep = {delimiter})</code>做讀取：</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/reticulate">reticulate</a></span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="flat-files.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb15-2"><a href="flat-files.html#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="flat-files.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the CSV and assign it to the variable data</span></span>
+<span id="cb16-2"><a href="flat-files.html#cb16-2" aria-hidden="true" tabindex="-1"></a>tax_data <span class="op">=</span> pd.read_csv(<span class="st">"data/vt_tax_data_2016.csv"</span>)</span>
+<span id="cb16-3"><a href="flat-files.html#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="flat-files.html#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the first few lines of data</span></span>
+<span id="cb16-5"><a href="flat-files.html#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tax_data.head())</span>
+<span id="cb16-6"><a href="flat-files.html#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    STATEFIPS STATE  zipcode  agi_stub  ...  N11901  A11901  N11902  A11902</span></span>
+<span id="cb16-7"><a href="flat-files.html#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0         50    VT        0         1  ...   10820    9734   88260  138337</span></span>
+<span id="cb16-8"><a href="flat-files.html#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         50    VT        0         2  ...   12820   20029   68760  151729</span></span>
+<span id="cb16-9"><a href="flat-files.html#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         50    VT        0         3  ...   10810   24499   34600   90583</span></span>
+<span id="cb16-10"><a href="flat-files.html#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         50    VT        0         4  ...    7320   21573   21300   67045</span></span>
+<span id="cb16-11"><a href="flat-files.html#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         50    VT        0         5  ...   12500   67761   23320  103034</span></span>
+<span id="cb16-12"><a href="flat-files.html#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-13"><a href="flat-files.html#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5 rows x 147 columns]</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="flat-files.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tax_data.shape)</span>
+<span id="cb17-2"><a href="flat-files.html#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (1476, 147)</span></span></code></pre></div>
+<div id="modifying-flat-file-imports" class="section level3" number="2.1.1">
+<h3>
+<span class="header-section-number">2.1.1</span> Modifying flat file imports<a class="anchor" aria-label="anchor" href="#modifying-flat-file-imports"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>
+<p>這邊要講的是一些細節，尤其是在原本的csv檔案太大(例如100多萬個row)時，要如何處理</p>
+<ul>
+<li>選取特定的column就好(<code>usecols = {column_name or column_index list}</code>)<br>
+</li>
+<li>選取前n個rows就好(<code>nrows = {n}</code>)<br>
+</li>
+<li>跳過你指定的rows(<code>skiprows = [0, 2, 3]</code>會跳過第0,2,3個row，<code>skiprows = 50</code>會跳過0~49個row)</li>
+</ul>
+</li>
+</ul>
+<div id="選取特定column" class="section level4" number="2.1.1.1">
+<h4>
+<span class="header-section-number">2.1.1.1</span> 選取特定column<a class="anchor" aria-label="anchor" href="#%E9%81%B8%E5%8F%96%E7%89%B9%E5%AE%9Acolumn"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>
+<p>原本的csv有147個column，太多了，很多我用不到，現在我只想load以下的column</p>
+<ul>
+<li>zipcode</li>
+<li>agi_stub (income group)</li>
+<li>mars1 (number of single households)</li>
+<li>MARS2 (number of households filing as married)<br>
+</li>
+<li>NUMDEP (number of dependents)</li>
+</ul>
+</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="flat-files.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create list of columns to use</span></span>
+<span id="cb18-2"><a href="flat-files.html#cb18-2" aria-hidden="true" tabindex="-1"></a>cols <span class="op">=</span> [<span class="st">"zipcode"</span>, <span class="st">"agi_stub"</span>, <span class="st">"mars1"</span>, <span class="st">"MARS2"</span>, <span class="st">"NUMDEP"</span>]</span>
+<span id="cb18-3"><a href="flat-files.html#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="flat-files.html#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame from csv using only selected columns</span></span>
+<span id="cb18-5"><a href="flat-files.html#cb18-5" aria-hidden="true" tabindex="-1"></a>tax_subcol <span class="op">=</span> pd.read_csv(<span class="st">"data/vt_tax_data_2016.csv"</span>, usecols <span class="op">=</span> cols)</span>
+<span id="cb18-6"><a href="flat-files.html#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="flat-files.html#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># View counts of dependents and tax returns by income level</span></span>
+<span id="cb18-8"><a href="flat-files.html#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tax_subcol.groupby(<span class="st">"agi_stub"</span>).<span class="bu">sum</span>())</span>
+<span id="cb18-9"><a href="flat-files.html#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           zipcode   mars1  MARS2  NUMDEP</span></span>
+<span id="cb18-10"><a href="flat-files.html#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; agi_stub                                </span></span>
+<span id="cb18-11"><a href="flat-files.html#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         1439444  170320  28480   52490</span></span>
+<span id="cb18-12"><a href="flat-files.html#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         1439444  104000  37690   64660</span></span>
+<span id="cb18-13"><a href="flat-files.html#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         1439444   39160  45390   47330</span></span>
+<span id="cb18-14"><a href="flat-files.html#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         1439444   11670  44410   37760</span></span>
+<span id="cb18-15"><a href="flat-files.html#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         1439444    7820  67750   60730</span></span>
+<span id="cb18-16"><a href="flat-files.html#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         1439444    1210  16340   16300</span></span></code></pre></div>
+</div>
+<div id="選取前n個rows-跳過某些row" class="section level4" number="2.1.1.2">
+<h4>
+<span class="header-section-number">2.1.1.2</span> 選取前n個rows, 跳過某些row<a class="anchor" aria-label="anchor" href="#%E9%81%B8%E5%8F%96%E5%89%8Dn%E5%80%8Brows-%E8%B7%B3%E9%81%8E%E6%9F%90%E4%BA%9Brow"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>現在，我們先讀取前500個rows，並存成<code>vt_data_first500</code>
+</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="flat-files.html#cb19-1" aria-hidden="true" tabindex="-1"></a>vt_data_first500 <span class="op">=</span> pd.read_csv(<span class="st">"data/vt_tax_data_2016.csv"</span>, nrows <span class="op">=</span> <span class="dv">500</span>)</span>
+<span id="cb19-2"><a href="flat-files.html#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vt_data_first500.shape)</span>
+<span id="cb19-3"><a href="flat-files.html#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (500, 147)</span></span></code></pre></div>
+<ul>
+<li><p>現在我想load之後的500個rows，命名成<code>vt_data_next500</code><br></p></li>
+<li>
+<p>要做到這樣，需要以下幾個步驟：</p>
+<ul>
+<li>用<code>skiprows = 500</code>來跳過前500個rows<br>
+</li>
+<li>用<code>nrows = 500</code>來說明我要取接下來這500個rows<br>
+</li>
+<li>用<code>header = None</code>來說明從row = 501開始讀的row，他不是header，他就是row，你要直接讀取他<br>
+</li>
+<li>用<code>names = list(vt_data_first500)</code>，來幫資料的欄位命名。這邊要注意到，<code>list(vt_data_first500)</code>就可以抓出vt_data_first500的colnames了</li>
+</ul>
+</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="flat-files.html#cb20-1" aria-hidden="true" tabindex="-1"></a>vt_data_next500 <span class="op">=</span> pd.read_csv(<span class="st">"data/vt_tax_data_2016.csv"</span>, </span>
+<span id="cb20-2"><a href="flat-files.html#cb20-2" aria-hidden="true" tabindex="-1"></a>                              nrows<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb20-3"><a href="flat-files.html#cb20-3" aria-hidden="true" tabindex="-1"></a>                              skiprows<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb20-4"><a href="flat-files.html#cb20-4" aria-hidden="true" tabindex="-1"></a>                              header<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb20-5"><a href="flat-files.html#cb20-5" aria-hidden="true" tabindex="-1"></a>                              names<span class="op">=</span><span class="bu">list</span>(vt_data_first500))</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="flat-files.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View the Vermont data frames to confirm they're different</span></span>
+<span id="cb21-2"><a href="flat-files.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vt_data_first500.head())</span>
+<span id="cb21-3"><a href="flat-files.html#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    STATEFIPS STATE  zipcode  agi_stub  ...  N11901  A11901  N11902  A11902</span></span>
+<span id="cb21-4"><a href="flat-files.html#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0         50    VT        0         1  ...   10820    9734   88260  138337</span></span>
+<span id="cb21-5"><a href="flat-files.html#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         50    VT        0         2  ...   12820   20029   68760  151729</span></span>
+<span id="cb21-6"><a href="flat-files.html#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         50    VT        0         3  ...   10810   24499   34600   90583</span></span>
+<span id="cb21-7"><a href="flat-files.html#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         50    VT        0         4  ...    7320   21573   21300   67045</span></span>
+<span id="cb21-8"><a href="flat-files.html#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         50    VT        0         5  ...   12500   67761   23320  103034</span></span>
+<span id="cb21-9"><a href="flat-files.html#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb21-10"><a href="flat-files.html#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5 rows x 147 columns]</span></span>
+<span id="cb21-11"><a href="flat-files.html#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vt_data_next500.head())</span>
+<span id="cb21-12"><a href="flat-files.html#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    STATEFIPS STATE  zipcode  agi_stub  ...  N11901  A11901  N11902  A11902</span></span>
+<span id="cb21-13"><a href="flat-files.html#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0         50    VT     5356         2  ...      50      76     130     212</span></span>
+<span id="cb21-14"><a href="flat-files.html#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         50    VT     5356         3  ...      40     142      50     148</span></span>
+<span id="cb21-15"><a href="flat-files.html#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         50    VT     5356         4  ...       0       0      30      87</span></span>
+<span id="cb21-16"><a href="flat-files.html#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         50    VT     5356         5  ...      30     531      30     246</span></span>
+<span id="cb21-17"><a href="flat-files.html#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         50    VT     5356         6  ...       0       0       0       0</span></span>
+<span id="cb21-18"><a href="flat-files.html#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb21-19"><a href="flat-files.html#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5 rows x 147 columns]</span></span></code></pre></div>
+</div>
+</div>
+<div id="handling-errors-and-missing-data" class="section level3" number="2.1.2">
+<h3>
+<span class="header-section-number">2.1.2</span> Handling errors and missing data<a class="anchor" aria-label="anchor" href="#handling-errors-and-missing-data"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>
+<p>讀取Flat File，常碰到以下問題：</p>
+<ul>
+<li>Column的data type錯誤 -&gt; 可以用<code>dtype = {column_name: type}</code>來修正錯誤<br>
+</li>
+<li>遺漏值的預設值和你想的不同(e.g. 某個欄位的數值=999代表missing value) -&gt; 使用<code>na_values</code> argument來做<br>
+</li>
+<li>直接丟error給你，無法parse成dataframe -&gt; 看error message來解決問題</li>
+</ul>
+</li>
+</ul>
+<div id="specify-data-types" class="section level4" number="2.1.2.1">
+<h4>
+<span class="header-section-number">2.1.2.1</span> Specify data types<a class="anchor" aria-label="anchor" href="#specify-data-types"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>舉例來說，看一下剛剛的<code>vt_data_first500</code>的各欄位data type</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="flat-files.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vt_data_first500.dtypes)</span>
+<span id="cb22-2"><a href="flat-files.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; STATEFIPS     int64</span></span>
+<span id="cb22-3"><a href="flat-files.html#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; STATE        object</span></span>
+<span id="cb22-4"><a href="flat-files.html#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zipcode       int64</span></span>
+<span id="cb22-5"><a href="flat-files.html#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; agi_stub      int64</span></span>
+<span id="cb22-6"><a href="flat-files.html#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; N1            int64</span></span>
+<span id="cb22-7"><a href="flat-files.html#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               ...  </span></span>
+<span id="cb22-8"><a href="flat-files.html#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; A85300        int64</span></span>
+<span id="cb22-9"><a href="flat-files.html#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; N11901        int64</span></span>
+<span id="cb22-10"><a href="flat-files.html#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; A11901        int64</span></span>
+<span id="cb22-11"><a href="flat-files.html#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; N11902        int64</span></span>
+<span id="cb22-12"><a href="flat-files.html#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; A11902        int64</span></span>
+<span id="cb22-13"><a href="flat-files.html#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Length: 147, dtype: object</span></span></code></pre></div>
+<ul>
+<li>可以看到，zipcode被判斷為<code>int64</code>，但其實他是字串。而<code>agi_stub</code>是社經地位，為categorical variable，所以應該是”category”<br>
+</li>
+<li>那我們就特別assign這兩個欄位的data type:</li>
+</ul>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="flat-files.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dict specifying data types for agi_stub and zipcode</span></span>
+<span id="cb23-2"><a href="flat-files.html#cb23-2" aria-hidden="true" tabindex="-1"></a>data_types <span class="op">=</span> {<span class="st">"agi_stub"</span>: <span class="st">"category"</span>,</span>
+<span id="cb23-3"><a href="flat-files.html#cb23-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"zipcode"</span>: <span class="st">"str"</span>}</span>
+<span id="cb23-4"><a href="flat-files.html#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="flat-files.html#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load csv using dtype to set correct data types</span></span>
+<span id="cb23-6"><a href="flat-files.html#cb23-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"data/vt_tax_data_2016.csv"</span>, dtype <span class="op">=</span> data_types)</span>
+<span id="cb23-7"><a href="flat-files.html#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="flat-files.html#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print data types of resulting frame</span></span>
+<span id="cb23-9"><a href="flat-files.html#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data.dtypes.head())</span>
+<span id="cb23-10"><a href="flat-files.html#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; STATEFIPS       int64</span></span>
+<span id="cb23-11"><a href="flat-files.html#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; STATE          object</span></span>
+<span id="cb23-12"><a href="flat-files.html#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; zipcode        object</span></span>
+<span id="cb23-13"><a href="flat-files.html#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; agi_stub     category</span></span>
+<span id="cb23-14"><a href="flat-files.html#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; N1              int64</span></span>
+<span id="cb23-15"><a href="flat-files.html#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dtype: object</span></span></code></pre></div>
+<ul>
+<li>nice，搞定。其實，更常見的workflow，是先把資料load下來，探索後，才轉換欄位的資料格式，而不是像現在這樣讀取的時後就轉。不過沒關係，這已經牽扯到資料清理的範圍，我們等資料清理那邊再來處理就好</li>
+</ul>
+</div>
+<div id="set-custom-na-values" class="section level4" number="2.1.2.2">
+<h4>
+<span class="header-section-number">2.1.2.2</span> Set custom NA values<a class="anchor" aria-label="anchor" href="#set-custom-na-values"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>這邊我們想做一個設定，把zipcode這個欄位中，數值=0的，都設為NA。作法如下：</li>
+</ul>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="flat-files.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dict specifying that 0s in zipcode are NA values</span></span>
+<span id="cb24-2"><a href="flat-files.html#cb24-2" aria-hidden="true" tabindex="-1"></a>null_values <span class="op">=</span> {<span class="st">"zipcode"</span>: <span class="dv">0</span>}</span>
+<span id="cb24-3"><a href="flat-files.html#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="flat-files.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load csv using na_values keyword argument</span></span>
+<span id="cb24-5"><a href="flat-files.html#cb24-5" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"data/vt_tax_data_2016.csv"</span>, </span>
+<span id="cb24-6"><a href="flat-files.html#cb24-6" aria-hidden="true" tabindex="-1"></a>                   na_values <span class="op">=</span> null_values)</span>
+<span id="cb24-7"><a href="flat-files.html#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="flat-files.html#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># View rows with NA ZIP codes</span></span>
+<span id="cb24-9"><a href="flat-files.html#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data[data.zipcode.isna()])</span>
+<span id="cb24-10"><a href="flat-files.html#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    STATEFIPS STATE  zipcode  agi_stub  ...  N11901  A11901  N11902  A11902</span></span>
+<span id="cb24-11"><a href="flat-files.html#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0         50    VT      NaN         1  ...   10820    9734   88260  138337</span></span>
+<span id="cb24-12"><a href="flat-files.html#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         50    VT      NaN         2  ...   12820   20029   68760  151729</span></span>
+<span id="cb24-13"><a href="flat-files.html#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         50    VT      NaN         3  ...   10810   24499   34600   90583</span></span>
+<span id="cb24-14"><a href="flat-files.html#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         50    VT      NaN         4  ...    7320   21573   21300   67045</span></span>
+<span id="cb24-15"><a href="flat-files.html#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         50    VT      NaN         5  ...   12500   67761   23320  103034</span></span>
+<span id="cb24-16"><a href="flat-files.html#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         50    VT      NaN         6  ...    3900   93123    2870   39425</span></span>
+<span id="cb24-17"><a href="flat-files.html#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb24-18"><a href="flat-files.html#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [6 rows x 147 columns]</span></span></code></pre></div>
+</div>
+<div id="skip-bad-data" class="section level4" number="2.1.2.3">
+<h4>
+<span class="header-section-number">2.1.2.3</span> Skip bad data<a class="anchor" aria-label="anchor" href="#skip-bad-data"><i class="fas fa-link"></i></a>
+</h4>
+<ul>
+<li>這邊舉了一個你<code>pd.read_csv()</code>會失敗的例子，就是原始資料中，有一個row，他的欄位數目比別人多<br>
+</li>
+<li>那這樣在讀取的時候，就會無法parse成大家都一樣的欄位數，所以會error<br>
+</li>
+<li>遇到這種問題，我們會稱剛剛那個row叫”bad line”，我們可以下參數，讓pandas跳過這個line，然後warning我們就好<br>
+</li>
+<li>看code就懂了：</li>
+</ul>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="flat-files.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb25-2"><a href="flat-files.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Set warn_bad_lines to issue warnings about bad records</span></span>
+<span id="cb25-3"><a href="flat-files.html#cb25-3" aria-hidden="true" tabindex="-1"></a>  data <span class="op">=</span> pd.read_csv(<span class="st">"data/vt_tax_data_2016_corrupt.csv"</span>, </span>
+<span id="cb25-4"><a href="flat-files.html#cb25-4" aria-hidden="true" tabindex="-1"></a>                     error_bad_lines <span class="op">=</span> <span class="va">False</span>, </span>
+<span id="cb25-5"><a href="flat-files.html#cb25-5" aria-hidden="true" tabindex="-1"></a>                     warn_bad_lines <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb25-6"><a href="flat-files.html#cb25-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-7"><a href="flat-files.html#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># View first 5 records</span></span>
+<span id="cb25-8"><a href="flat-files.html#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(data.head())</span>
+<span id="cb25-9"><a href="flat-files.html#cb25-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-10"><a href="flat-files.html#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> pd.io.common.CParserError:</span>
+<span id="cb25-11"><a href="flat-files.html#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Your data contained rows that could not be parsed."</span>)</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="excel" class="section level2" number="2.2">
+<h2>
+<span class="header-section-number">2.2</span> Excel<a class="anchor" aria-label="anchor" href="#excel"><i class="fas fa-link"></i></a>
+</h2>
+<div id="single-worksheet" class="section level3" number="2.2.1">
+<h3>
+<span class="header-section-number">2.2.1</span> Single worksheet<a class="anchor" aria-label="anchor" href="#single-worksheet"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li><p>只要用<code>pd.read_excel()</code>就可以讀excel了，超easy的<br></p></li>
+<li>
+<p>一些重要的argument，介紹一下：</p>
+<ul>
+<li>
+<code>nrows = 100</code>，只取前100個row<br>
+</li>
+<li>
+<code>skiprows = 100</code>，跳過前100個row<br>
+</li>
+<li>
+<code>skiprows = [1,2,3]</code>，跳過這三個row<br>
+</li>
+<li>
+<code>usecols = ["a","b","c"]</code> 只讀colname= a, b, c的column<br>
+</li>
+<li>
+<code>usecols = [0,1,2]</code> 只讀這三個column<br>
+</li>
+<li>
+<code>usecols = "A:C, E"</code>，這就是excel專屬的了，就是你看到的欄位A,B,C,E要讀進來</li>
+</ul>
+</li>
+<li><p>先來讀資料吧：</p></li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="flat-files.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read spreadsheet and assign it to survey_responses</span></span>
+<span id="cb26-2"><a href="flat-files.html#cb26-2" aria-hidden="true" tabindex="-1"></a>survey_responses <span class="op">=</span> pd.read_excel(<span class="st">"data/fcc-new-coder-survey.xlsx"</span>)</span>
+<span id="cb26-3"><a href="flat-files.html#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="flat-files.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the head of the data frame</span></span>
+<span id="cb26-5"><a href="flat-files.html#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(survey_responses.head())</span>
+<span id="cb26-6"><a href="flat-files.html#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    FreeCodeCamp New Developer Survey Responses, 2016  ...     Unnamed: 97</span></span>
+<span id="cb26-7"><a href="flat-files.html#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0  Source: https://www.kaggle.com/freecodecamp/20...  ...             NaN</span></span>
+<span id="cb26-8"><a href="flat-files.html#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                                                Age  ...  StudentDebtOwe</span></span>
+<span id="cb26-9"><a href="flat-files.html#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                                                 28  ...           20000</span></span>
+<span id="cb26-10"><a href="flat-files.html#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3                                                 22  ...             NaN</span></span>
+<span id="cb26-11"><a href="flat-files.html#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4                                                 19  ...             NaN</span></span>
+<span id="cb26-12"><a href="flat-files.html#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb26-13"><a href="flat-files.html#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5 rows x 98 columns]</span></span></code></pre></div>
+<ul>
+<li>會發現，第一列根本就不是變數名稱，回去看一下excel原始檔，會發現，真正的變數是從第三列開始<br>
+</li>
+<li>所以，我們用<code>skiprows = 2</code>來跳過前兩列</li>
+</ul>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="flat-files.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read spreadsheet and assign it to survey_responses</span></span>
+<span id="cb27-2"><a href="flat-files.html#cb27-2" aria-hidden="true" tabindex="-1"></a>survey_responses <span class="op">=</span> pd.read_excel(<span class="st">"data/fcc-new-coder-survey.xlsx"</span>,skiprows <span class="op">=</span> <span class="dv">2</span>)</span>
+<span id="cb27-3"><a href="flat-files.html#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="flat-files.html#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the head of the data frame</span></span>
+<span id="cb27-5"><a href="flat-files.html#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(survey_responses.head())</span>
+<span id="cb27-6"><a href="flat-files.html#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Age  AttendedBootcamp  ...              SchoolMajor  StudentDebtOwe</span></span>
+<span id="cb27-7"><a href="flat-files.html#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0  28.0               0.0  ...                      NaN           20000</span></span>
+<span id="cb27-8"><a href="flat-files.html#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  22.0               0.0  ...                      NaN             NaN</span></span>
+<span id="cb27-9"><a href="flat-files.html#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  19.0               0.0  ...                      NaN             NaN</span></span>
+<span id="cb27-10"><a href="flat-files.html#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  26.0               0.0  ...  Cinematography And Film            7000</span></span>
+<span id="cb27-11"><a href="flat-files.html#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  20.0               0.0  ...                      NaN             NaN</span></span>
+<span id="cb27-12"><a href="flat-files.html#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb27-13"><a href="flat-files.html#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5 rows x 98 columns]</span></span></code></pre></div>
+<ul>
+<li>接下來，試試讀部分資料： 跳過前兩個row，只選欄位AD, AW~BA的column:</li>
+</ul>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="flat-files.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create string of lettered columns to load</span></span>
+<span id="cb28-2"><a href="flat-files.html#cb28-2" aria-hidden="true" tabindex="-1"></a>col_string <span class="op">=</span> <span class="st">"AD, AW:BA"</span></span>
+<span id="cb28-3"><a href="flat-files.html#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="flat-files.html#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data with skiprows and usecols set</span></span>
+<span id="cb28-5"><a href="flat-files.html#cb28-5" aria-hidden="true" tabindex="-1"></a>survey_responses <span class="op">=</span> pd.read_excel(<span class="st">"data/fcc-new-coder-survey.xlsx"</span>, </span>
+<span id="cb28-6"><a href="flat-files.html#cb28-6" aria-hidden="true" tabindex="-1"></a>                        skiprows <span class="op">=</span> <span class="dv">2</span>, </span>
+<span id="cb28-7"><a href="flat-files.html#cb28-7" aria-hidden="true" tabindex="-1"></a>                        usecols <span class="op">=</span> col_string)</span>
+<span id="cb28-8"><a href="flat-files.html#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="flat-files.html#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># View the names of the columns selected</span></span>
+<span id="cb28-10"><a href="flat-files.html#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(survey_responses.columns)</span>
+<span id="cb28-11"><a href="flat-files.html#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Index(['ExpectedEarning', 'JobApplyWhen', 'JobPref', 'JobRelocateYesNo',</span></span>
+<span id="cb28-12"><a href="flat-files.html#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        'JobRoleInterest', 'JobWherePref'],</span></span>
+<span id="cb28-13"><a href="flat-files.html#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       dtype='object')</span></span></code></pre></div>
+</div>
+<div id="multiple-worksheet" class="section level3" number="2.2.2">
+<h3>
+<span class="header-section-number">2.2.2</span> Multiple worksheet<a class="anchor" aria-label="anchor" href="#multiple-worksheet"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>
+<p>如果excel檔裡面有很多個sheet，那可以只選一個來讀，或讀多個。語法都是透過<code>sheet_name</code>這個argument</p>
+<ul>
+<li>
+<code>sheet_name = "HAHA"</code> 讀HAHA這個名稱的sheet<br>
+</li>
+<li>
+<code>sheet_name = 0</code> 讀index = 0這個sheet，也就是第一個sheet (注意這邊還是zero-indexed系統)<br>
+</li>
+<li>
+<code>sheet_name = ["HAHA", "HIHI"]</code> 用list來說明要讀哪些sheet<br>
+</li>
+<li>
+<code>sheet_name = [0, 1]</code> 用list來說明要讀哪些sheet<br>
+</li>
+<li>
+<code>sheet_name = None</code>，就可以讀進”全部”的sheets</li>
+</ul>
+</li>
+<li><p>如果今天讀進多個sheet，那python要用哪種data structure來存？ -&gt; dictionary。key是sheet name，value是dataframe</p></li>
+</ul>
+<div class="sourceCode" id="cb29"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="flat-files.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load both the 2016 and 2017 sheets by name</span></span>
+<span id="cb29-2"><a href="flat-files.html#cb29-2" aria-hidden="true" tabindex="-1"></a>all_survey_data <span class="op">=</span> pd.read_excel(<span class="st">"data/fcc-new-coder-survey.xlsx"</span>,</span>
+<span id="cb29-3"><a href="flat-files.html#cb29-3" aria-hidden="true" tabindex="-1"></a>                                skiprows <span class="op">=</span> <span class="dv">2</span>, </span>
+<span id="cb29-4"><a href="flat-files.html#cb29-4" aria-hidden="true" tabindex="-1"></a>                                sheet_name <span class="op">=</span> [<span class="st">'2016'</span>,<span class="st">'2017'</span>])</span>
+<span id="cb29-5"><a href="flat-files.html#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="flat-files.html#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># View the data type of all_survey_data</span></span>
+<span id="cb29-7"><a href="flat-files.html#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(all_survey_data))</span>
+<span id="cb29-8"><a href="flat-files.html#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;class 'dict'&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="flat-files.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(all_survey_data[<span class="st">"2017"</span>])</span>
+<span id="cb30-2"><a href="flat-files.html#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Age  AttendedBootcamp  ...                  SchoolMajor  StudentDebtOwe</span></span>
+<span id="cb30-3"><a href="flat-files.html#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0    27.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb30-4"><a href="flat-files.html#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    34.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb30-5"><a href="flat-files.html#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    21.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb30-6"><a href="flat-files.html#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    26.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb30-7"><a href="flat-files.html#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    20.0               0.0  ...       Information Technology             NaN</span></span>
+<span id="cb30-8"><a href="flat-files.html#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ..    ...               ...  ...                          ...             ...</span></span>
+<span id="cb30-9"><a href="flat-files.html#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 995  30.0               0.0  ...                    Chemistry             NaN</span></span>
+<span id="cb30-10"><a href="flat-files.html#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 996  31.0               0.0  ...         Computer Programming          1500.0</span></span>
+<span id="cb30-11"><a href="flat-files.html#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 997  16.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb30-12"><a href="flat-files.html#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 998  28.0               0.0  ...                      Finance         20000.0</span></span>
+<span id="cb30-13"><a href="flat-files.html#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 999  22.0               0.0  ...  Computer Aided Design (CAD)             NaN</span></span>
+<span id="cb30-14"><a href="flat-files.html#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb30-15"><a href="flat-files.html#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1000 rows x 98 columns]</span></span></code></pre></div>
+<ul>
+<li>現在這兩個sheet，其實欄位都一樣，只是所屬年份不同。那我如果想把這兩個sheet合併起來，然後多加一個column，註明他是從哪個sheet來的，我可以這樣做：</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="flat-files.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an empty data frame</span></span>
+<span id="cb31-2"><a href="flat-files.html#cb31-2" aria-hidden="true" tabindex="-1"></a>combined_responses <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb31-3"><a href="flat-files.html#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="flat-files.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up for loop to iterate through values in responses</span></span>
+<span id="cb31-5"><a href="flat-files.html#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> df <span class="kw">in</span> all_survey_data.values():</span>
+<span id="cb31-6"><a href="flat-files.html#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print the number of rows being added</span></span>
+<span id="cb31-7"><a href="flat-files.html#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">"Adding </span><span class="sc">{}</span><span class="st"> rows"</span>.<span class="bu">format</span>(df.shape[<span class="dv">0</span>]))</span>
+<span id="cb31-8"><a href="flat-files.html#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Append df to all_responses, assign result</span></span>
+<span id="cb31-9"><a href="flat-files.html#cb31-9" aria-hidden="true" tabindex="-1"></a>  combined_responses <span class="op">=</span> combined_responses.append(df)</span>
+<span id="cb31-10"><a href="flat-files.html#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding 1000 rows</span></span>
+<span id="cb31-11"><a href="flat-files.html#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Adding 1000 rows</span></span>
+<span id="cb31-12"><a href="flat-files.html#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(combined_responses)</span>
+<span id="cb31-13"><a href="flat-files.html#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Age  AttendedBootcamp  ...                  SchoolMajor  StudentDebtOwe</span></span>
+<span id="cb31-14"><a href="flat-files.html#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0    28.0               0.0  ...                          NaN           20000</span></span>
+<span id="cb31-15"><a href="flat-files.html#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    22.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb31-16"><a href="flat-files.html#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    19.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb31-17"><a href="flat-files.html#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    26.0               0.0  ...      Cinematography And Film            7000</span></span>
+<span id="cb31-18"><a href="flat-files.html#cb31-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    20.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb31-19"><a href="flat-files.html#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ..    ...               ...  ...                          ...             ...</span></span>
+<span id="cb31-20"><a href="flat-files.html#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 995  30.0               0.0  ...                    Chemistry             NaN</span></span>
+<span id="cb31-21"><a href="flat-files.html#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 996  31.0               0.0  ...         Computer Programming          1500.0</span></span>
+<span id="cb31-22"><a href="flat-files.html#cb31-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 997  16.0               0.0  ...                          NaN             NaN</span></span>
+<span id="cb31-23"><a href="flat-files.html#cb31-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 998  28.0               0.0  ...                      Finance         20000.0</span></span>
+<span id="cb31-24"><a href="flat-files.html#cb31-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 999  22.0               0.0  ...  Computer Aided Design (CAD)             NaN</span></span>
+<span id="cb31-25"><a href="flat-files.html#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb31-26"><a href="flat-files.html#cb31-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2000 rows x 98 columns]</span></span></code></pre></div>
+<ul>
+<li>簡單畫個圖:</li>
+</ul>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="flat-files.html#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Graph employment statuses in sample</span></span>
+<span id="cb32-2"><a href="flat-files.html#cb32-2" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> combined_responses.groupby(<span class="st">"EmploymentStatus"</span>).EmploymentStatus.count()</span>
+<span id="cb32-3"><a href="flat-files.html#cb32-3" aria-hidden="true" tabindex="-1"></a>counts.plot.barh()</span>
+<span id="cb32-4"><a href="flat-files.html#cb32-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<div class="inline-figure"><img src="flat_files_files/figure-html/unnamed-chunk-19-1.png" width="672"></div>
+</div>
+<div id="modify-imports-truefalse-data" class="section level3" number="2.2.3">
+<h3>
+<span class="header-section-number">2.2.3</span> Modify imports: True/False data<a class="anchor" aria-label="anchor" href="#modify-imports-truefalse-data"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>在pandas中，如果你有些欄位，不是True/False的coding，但他實際上是boolean，那我該如何修改他呢？<br>
+</li>
+<li>舉例來說，這筆假資料：</li>
+</ul>
+<div class="sourceCode" id="cb33"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="flat-files.html#cb33-1" aria-hidden="true" tabindex="-1"></a>boolean_df <span class="op">=</span> pd.read_excel(<span class="st">"data/boolean_excel.xlsx"</span>)</span>
+<span id="cb33-2"><a href="flat-files.html#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(boolean_df)</span>
+<span id="cb33-3"><a href="flat-files.html#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       aa   bb  cc</span></span>
+<span id="cb33-4"><a href="flat-files.html#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0   True  Yes   1</span></span>
+<span id="cb33-5"><a href="flat-files.html#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  False   No   1</span></span>
+<span id="cb33-6"><a href="flat-files.html#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   True   No   0</span></span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="flat-files.html#cb34-1" aria-hidden="true" tabindex="-1"></a>boolean_df.dtypes</span>
+<span id="cb34-2"><a href="flat-files.html#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; aa      bool</span></span>
+<span id="cb34-3"><a href="flat-files.html#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bb    object</span></span>
+<span id="cb34-4"><a href="flat-files.html#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; cc     int64</span></span>
+<span id="cb34-5"><a href="flat-files.html#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dtype: object</span></span></code></pre></div>
+<ul>
+<li>可以看到aa是boolean，而bb和cc都不是<br>
+</li>
+<li>那如果我希望bb也是boolean，然後”Yes” = True, “No” = False，我可以這樣做：</li>
+</ul>
+<div class="sourceCode" id="cb35"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="flat-files.html#cb35-1" aria-hidden="true" tabindex="-1"></a>boolean_df <span class="op">=</span> pd.read_excel(<span class="st">"data/boolean_excel.xlsx"</span>,</span>
+<span id="cb35-2"><a href="flat-files.html#cb35-2" aria-hidden="true" tabindex="-1"></a>                          dtype <span class="op">=</span> {<span class="st">"bb"</span>: <span class="st">"bool"</span>},</span>
+<span id="cb35-3"><a href="flat-files.html#cb35-3" aria-hidden="true" tabindex="-1"></a>                          true_values <span class="op">=</span> [<span class="st">"Yes"</span>],</span>
+<span id="cb35-4"><a href="flat-files.html#cb35-4" aria-hidden="true" tabindex="-1"></a>                          false_values <span class="op">=</span> [<span class="st">"No"</span>])</span>
+<span id="cb35-5"><a href="flat-files.html#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(boolean_df)</span>
+<span id="cb35-6"><a href="flat-files.html#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       aa     bb  cc</span></span>
+<span id="cb35-7"><a href="flat-files.html#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0   True   True   1</span></span>
+<span id="cb35-8"><a href="flat-files.html#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  False  False   1</span></span>
+<span id="cb35-9"><a href="flat-files.html#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   True  False   0</span></span>
+<span id="cb35-10"><a href="flat-files.html#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(boolean_df.dtypes)</span>
+<span id="cb35-11"><a href="flat-files.html#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; aa     bool</span></span>
+<span id="cb35-12"><a href="flat-files.html#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bb     bool</span></span>
+<span id="cb35-13"><a href="flat-files.html#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; cc    int64</span></span>
+<span id="cb35-14"><a href="flat-files.html#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dtype: object</span></span></code></pre></div>
+<ul>
+<li>nice，修改成功。那如果我想把cc也改成boolean，然後1 = True, 0 = False，我就依樣畫葫蘆：</li>
+</ul>
+<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="flat-files.html#cb36-1" aria-hidden="true" tabindex="-1"></a>boolean_df <span class="op">=</span> pd.read_excel(<span class="st">"data/boolean_excel.xlsx"</span>,</span>
+<span id="cb36-2"><a href="flat-files.html#cb36-2" aria-hidden="true" tabindex="-1"></a>                          dtype <span class="op">=</span> {<span class="st">"bb"</span>: <span class="st">"bool"</span>, <span class="st">"cc"</span>: <span class="st">"bool"</span>},</span>
+<span id="cb36-3"><a href="flat-files.html#cb36-3" aria-hidden="true" tabindex="-1"></a>                          true_values <span class="op">=</span> [<span class="st">"Yes"</span>, <span class="dv">1</span>],</span>
+<span id="cb36-4"><a href="flat-files.html#cb36-4" aria-hidden="true" tabindex="-1"></a>                          false_values <span class="op">=</span> [<span class="st">"No"</span>, <span class="dv">0</span>])</span>
+<span id="cb36-5"><a href="flat-files.html#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(boolean_df)</span>
+<span id="cb36-6"><a href="flat-files.html#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       aa     bb     cc</span></span>
+<span id="cb36-7"><a href="flat-files.html#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0   True   True   True</span></span>
+<span id="cb36-8"><a href="flat-files.html#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  False  False   True</span></span>
+<span id="cb36-9"><a href="flat-files.html#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   True  False  False</span></span>
+<span id="cb36-10"><a href="flat-files.html#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(boolean_df.dtypes)</span>
+<span id="cb36-11"><a href="flat-files.html#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; aa    bool</span></span>
+<span id="cb36-12"><a href="flat-files.html#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bb    bool</span></span>
+<span id="cb36-13"><a href="flat-files.html#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; cc    bool</span></span>
+<span id="cb36-14"><a href="flat-files.html#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dtype: object</span></span></code></pre></div>
+<ul>
+<li>搞定!!</li>
+</ul>
+</div>
+<div id="modify-imports-parsing-dates" class="section level3" number="2.2.4">
+<h3>
+<span class="header-section-number">2.2.4</span> Modify imports: parsing dates<a class="anchor" aria-label="anchor" href="#modify-imports-parsing-dates"><i class="fas fa-link"></i></a>
+</h3>
+<ul>
+<li>接下來要處理時間的資料了，看一下假資料：</li>
+</ul>
+<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="flat-files.html#cb37-1" aria-hidden="true" tabindex="-1"></a>fake_time_dic <span class="op">=</span> {</span>
+<span id="cb37-2"><a href="flat-files.html#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Part1StartTime"</span>: [<span class="st">"2020-10-07 21:00:00"</span>, <span class="st">"2020-10-08 21:00:00"</span>],</span>
+<span id="cb37-3"><a href="flat-files.html#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Part1EndTime"</span>: [<span class="st">"2020-10-07 22:00:00"</span>, <span class="st">"2020-10-08 22:00:00"</span>],</span>
+<span id="cb37-4"><a href="flat-files.html#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Part2StartDate"</span>: [<span class="st">"2020-11-07"</span>, <span class="st">"2020-11-08"</span>],</span>
+<span id="cb37-5"><a href="flat-files.html#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Part2StartTime"</span>: [<span class="st">"21:00:00"</span>, <span class="st">"22:12:15"</span>],</span>
+<span id="cb37-6"><a href="flat-files.html#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Part2EndTime"</span>: [<span class="st">"07112020 22:00:00"</span>, <span class="st">"08112020 23:00:00"</span>]</span>
+<span id="cb37-7"><a href="flat-files.html#cb37-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb37-8"><a href="flat-files.html#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="flat-files.html#cb37-9" aria-hidden="true" tabindex="-1"></a>fake_time_df <span class="op">=</span> pd.DataFrame(fake_time_dic)</span>
+<span id="cb37-10"><a href="flat-files.html#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co"># fake_time_df.to_excel("/home/tom-hanks/import_data/fake_time_df.xlsx")</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">py</span><span class="op">$</span><span class="va">fake_time_df</span>
+<span class="co">#&gt;        Part1StartTime        Part1EndTime Part2StartDate</span>
+<span class="co">#&gt; 1 2020-10-07 21:00:00 2020-10-07 22:00:00     2020-11-07</span>
+<span class="co">#&gt; 2 2020-10-08 21:00:00 2020-10-08 22:00:00     2020-11-08</span>
+<span class="co">#&gt;   Part2StartTime      Part2EndTime</span>
+<span class="co">#&gt; 1       21:00:00 07112020 22:00:00</span>
+<span class="co">#&gt; 2       22:12:15 08112020 23:00:00</span></code></pre></div>
+<ul>
+<li><p>可以看到<code>Part1StartTime</code>是標準的yyyy-mm-dd hh:mm:ss，但<code>Part2StartDate</code>只有yyyy-mm-dd，而<code>Part2EndTime</code>更是倒過來的ddmmyyyy hh:mm:ss<br></p></li>
+<li><p>那我們要如何parse呢？ 分兩種做法，一種是讀進來的時候直接parse，另一種是像現在這樣，先讀取，再轉換<br></p></li>
+<li><p>我們現在先示範先讀取再轉換的做法。方法很簡單，用<code>pd.to_datetime(column, format = "")</code>來處理<br></p></li>
+<li>
+<p>其中，format的部分，對照表如下：</p>
+<table class="table table-sm">
+<colgroup>
+<col width="22%">
+<col width="31%">
+<col width="45%">
+</colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>%Y</td>
+<td>Year(4-digit)</td>
+<td>2020</td>
+</tr>
+<tr class="even">
+<td>%m</td>
+<td>Month (zero-padded)</td>
+<td>10</td>
+</tr>
+<tr class="odd">
+<td>%d</td>
+<td>Day (zero-padded)</td>
+<td>08</td>
+</tr>
+<tr class="even">
+<td>%H</td>
+<td>Hour (24-hour clock)</td>
+<td>13</td>
+</tr>
+<tr class="odd">
+<td>%M</td>
+<td>Minute (zero-padded)</td>
+<td>37</td>
+</tr>
+<tr class="even">
+<td>%S</td>
+<td>Second(zero-padded)</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="flat-files.html#cb39-1" aria-hidden="true" tabindex="-1"></a>fake_time_df[<span class="st">'Part1StartTime'</span>] <span class="op">=</span> pd.to_datetime(fake_time_df[<span class="st">'Part1StartTime'</span>], <span class="bu">format</span> <span class="op">=</span> <span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st"> %H:%M:%S"</span>)</span>
+<span id="cb39-2"><a href="flat-files.html#cb39-2" aria-hidden="true" tabindex="-1"></a>fake_time_df[<span class="st">'Part2EndTime'</span>] <span class="op">=</span> pd.to_datetime(fake_time_df[<span class="st">'Part2EndTime'</span>], <span class="bu">format</span> <span class="op">=</span> <span class="st">"%m</span><span class="sc">%d</span><span class="st">%Y %H:%M:%S"</span>)</span>
+<span id="cb39-3"><a href="flat-files.html#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="flat-files.html#cb39-4" aria-hidden="true" tabindex="-1"></a>fake_time_df.dtypes</span>
+<span id="cb39-5"><a href="flat-files.html#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Part1StartTime    datetime64[ns]</span></span>
+<span id="cb39-6"><a href="flat-files.html#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Part1EndTime              object</span></span>
+<span id="cb39-7"><a href="flat-files.html#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Part2StartDate            object</span></span>
+<span id="cb39-8"><a href="flat-files.html#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Part2StartTime            object</span></span>
+<span id="cb39-9"><a href="flat-files.html#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Part2EndTime      datetime64[ns]</span></span>
+<span id="cb39-10"><a href="flat-files.html#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dtype: object</span></span></code></pre></div>
+<ul>
+<li>接下來第二種作法，是讀取時，直接指定：</li>
+</ul>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="flat-files.html#cb40-1" aria-hidden="true" tabindex="-1"></a>fake_time_df <span class="op">=</span> pd.read_excel(<span class="st">"data/fake_time_df.xlsx"</span>, </span>
+<span id="cb40-2"><a href="flat-files.html#cb40-2" aria-hidden="true" tabindex="-1"></a>                            parse_dates <span class="op">=</span> [<span class="st">"Part1StartTime"</span>])</span>
+<span id="cb40-3"><a href="flat-files.html#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Print first few values of Part1StartTime</span></span>
+<span id="cb40-4"><a href="flat-files.html#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fake_time_df.Part1StartTime.head())</span>
+<span id="cb40-5"><a href="flat-files.html#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0   2020-10-07 21:00:00</span></span>
+<span id="cb40-6"><a href="flat-files.html#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   2020-10-08 21:00:00</span></span>
+<span id="cb40-7"><a href="flat-files.html#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Name: Part1StartTime, dtype: datetime64[ns]</span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="flat-files.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dict of columns to combine into new datetime column</span></span>
+<span id="cb41-2"><a href="flat-files.html#cb41-2" aria-hidden="true" tabindex="-1"></a>datetime_cols <span class="op">=</span> {<span class="st">"Part2Start"</span>: [<span class="st">"Part2StartDate"</span>, </span>
+<span id="cb41-3"><a href="flat-files.html#cb41-3" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Part2StartTime"</span>]}</span>
+<span id="cb41-4"><a href="flat-files.html#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="flat-files.html#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load file, supplying the dict to parse_dates</span></span>
+<span id="cb41-6"><a href="flat-files.html#cb41-6" aria-hidden="true" tabindex="-1"></a>fake_time_df <span class="op">=</span> pd.read_excel(<span class="st">"data/fake_time_df.xlsx"</span>,</span>
+<span id="cb41-7"><a href="flat-files.html#cb41-7" aria-hidden="true" tabindex="-1"></a>                            parse_dates<span class="op">=</span>datetime_cols)</span>
+<span id="cb41-8"><a href="flat-files.html#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="flat-files.html#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="co"># View summary statistics about Part2Start</span></span>
+<span id="cb41-10"><a href="flat-files.html#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fake_time_df.Part2Start.describe())</span>
+<span id="cb41-11"><a href="flat-files.html#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; count                       2</span></span>
+<span id="cb41-12"><a href="flat-files.html#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; unique                      2</span></span>
+<span id="cb41-13"><a href="flat-files.html#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; top       2020-11-07 21:00:00</span></span>
+<span id="cb41-14"><a href="flat-files.html#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; freq                        1</span></span>
+<span id="cb41-15"><a href="flat-files.html#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; first     2020-11-07 21:00:00</span></span>
+<span id="cb41-16"><a href="flat-files.html#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; last      2020-11-08 22:12:15</span></span>
+<span id="cb41-17"><a href="flat-files.html#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Name: Part2Start, dtype: object</span></span>
+<span id="cb41-18"><a href="flat-files.html#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb41-19"><a href="flat-files.html#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;string&gt;:1: FutureWarning: Treating datetime data as categorical rather than numeric in `.describe` is deprecated and will be removed in a future version of pandas. Specify `datetime_is_numeric=True` to silence this warning and adopt the future behavior now.</span></span></code></pre></div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="write-and-read-files.html"><span class="header-section-number">1</span> Write and read files</a></div>
+<div class="next"><a href="database.html"><span class="header-section-number">3</span> Database</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#flat-files"><span class="header-section-number">2</span> Flat Files</a></li>
+<li>
+<a class="nav-link" href="#csv"><span class="header-section-number">2.1</span> CSV</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#modifying-flat-file-imports"><span class="header-section-number">2.1.1</span> Modifying flat file imports</a></li>
+<li><a class="nav-link" href="#handling-errors-and-missing-data"><span class="header-section-number">2.1.2</span> Handling errors and missing data</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#excel"><span class="header-section-number">2.2</span> Excel</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#single-worksheet"><span class="header-section-number">2.2.1</span> Single worksheet</a></li>
+<li><a class="nav-link" href="#multiple-worksheet"><span class="header-section-number">2.2.2</span> Multiple worksheet</a></li>
+<li><a class="nav-link" href="#modify-imports-truefalse-data"><span class="header-section-number">2.2.3</span> Modify imports: True/False data</a></li>
+<li><a class="nav-link" href="#modify-imports-parsing-dates"><span class="header-section-number">2.2.4</span> Modify imports: parsing dates</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/LeeHank/ds_tutorial/blob/master/flat_files.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/LeeHank/ds_tutorial/edit/master/flat_files.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Data Science Tutorial</strong>" was written by Hank Lee. It was last built on 2022-01-14.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

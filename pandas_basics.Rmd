@@ -1,0 +1,873 @@
+# Pandas basics
+
+```{r include=FALSE}
+library(reticulate)
+```
+
+
+```{python}
+import pandas as pd
+```
+
+## Inspecting DataFrame
+
+-   拿到資料的第一步，就是去看看這份資料裡有甚麼東西\
+
+-   在R裡面，最常用的就是 `head()`來先看前幾筆，`dim()`來看一下列數和行數，`str()`來看各欄位的type，用`summary`來看各欄位的描述統計量
+
+-   在Python也是一樣，只是R都是用function，但python是物件導向，所以是用methods
+
+    | R           | Python        |
+    |-------------|---------------|
+    | head(df, n) | df.head(n)    |
+    | dim(df)     | df.shape      |
+    | str(df)     | df.info()     |
+    | summary(df) | df.describe() |
+
+-   接下來我們就來讀一筆資料，然後看看這些結果
+
+```{python}
+homelessness = pd.read_csv("data/homelessness.csv")
+```
+
+```{python}
+homelessness.head()
+```
+
+-   這筆資料是在描述美國各州無家可歸的人數有多少\
+-   第二個欄位和第一個欄位，就在講是哪個州的哪個地區\
+-   第三個欄位的individuals在講the number of homeless individuals not part of a family with children\
+-   第四個欄位的family\_members在講the number of homeless individuals part of a family with children\
+-   第五個欄位是這個州的人口有多少
+
+```{python}
+homelessness.shape
+```
+
+-   這筆資料有51的rows，5個column
+
+```{python}
+homelessness.info()
+```
+
+```{python}
+homelessness.describe()
+```
+
+## Parts of a DataFrame
+
+-   對data有初步認識後，我們常常就會想來擷取這份data的部分資訊\
+
+-   除了擷取某些column，某些row外，在R我們也常常用`colnames()`和`rownames()`，來擷取dataframe的column names & row names\
+
+-   在Python，一樣，又是因為物件導向，所以他是用attribute(因為是這份df的特性，而不是methods，所以使用時，也不用加括號)來得到這些資訊
+
+    | R              | Python       |
+    |----------------|--------------|
+    | colnames(data) | data.columns |
+    | rownames(data) | data.index   |
+    |                | data.values  |
+
+```{python}
+print(homelessness.columns)
+```
+
+```{python}
+print(homelessness.index)
+```
+
+-   最後，python比R多出來的東西，是value，他可以只取出DataFrame裡面的值。那此時的data type，就會是二維list:
+
+```{python}
+homelessness.values
+```
+
+```{python}
+type(homelessness.values)
+```
+
+## select, filter, arrange, & mutate
+
+-   在R裡面，我最常用到的四個函數，在pandas裡面都有對應的method可以用
+
+### select
+
+| dplyr                  | Pandas                               |
+|------------------------|--------------------------------------|
+| select(df, col1)       | df["col1"]是series, df[["col1"]]是df |
+| select(df, col1, col2) | df[["col1", "col2"]                  |
+| select(df, col1:col3)  | df.loc[:, "col1":"col3"]                 |
+
+-   來練習吧：我想先select "individual"這個欄位
+
+```{python}
+ind_series = homelessness["individuals"]
+print(type(ind_series))
+```
+
+```{python}
+ind_series.head()
+```
+
+```{python haha-here}
+ind_df = homelessness[["individuals"]]
+print(type(ind_df))
+```
+
+```{python}
+print(ind_df.head())
+```
+
+-   再來，我想select "state"和"family\_members"這兩個column
+
+```{python}
+state_fam = homelessness[["state", "family_members"]]
+print(state_fam.head())
+```
+
+-   再來，我想select從individuals到family\_members
+
+```{python}
+ind_to_fam = homelessness.loc[:, "individuals":"family_members"]
+print(ind_to_fam.head())
+```
+
+### filter  
+
+* 篩選出individuals > 10000的資料  
+
+```{python}
+homelessness.query("individuals > 10000")
+```
+
+* 篩選出region = "Mountain"的資料  
+
+```{python}
+homelessness.query("region == 'Mountain'").head()
+```
+
+* 篩選出family members < 1000 & region = "Pacific"  
+
+```{python}
+homelessness.query("family_members < 1000 & region == 'Pacific'")
+```
+
+* 篩選出region是"South Atlantic"或是"Mid_atlantic"  
+
+```{python}
+homelessness[homelessness["region"].isin(["South Atlantic", "Mid_atlantic"])]
+```
+
+### arrange  
+
+* 我想看individuals的top5  
+
+```{python}
+homelessness.sort_values("individuals", ascending = False).head()
+```
+
+* 我想先依照region由小到大排，然後，region平手的，再依照family_members由大到小排，最後print出前五個  
+
+```{python}
+homelessness.sort_values(["region", "family_members"], ascending = [True, False]).head()
+```
+
+### mutate and rename  
+
+* 我想新增一個total的欄位，定義為individuals + family_members  
+
+```{python}
+new = homelessness.assign(total = homelessness["individuals"]+homelessness["family_members"])
+
+new[["individuals", "family_members", "total"]].head()
+```
+* 我想把new這個table的"region"改名為region2就好  
+
+```{python}
+new.rename(columns = {"region": "region2"}).head()
+```
+
+### summarise  
+
+* 接下來，先讀一個新的資料集  
+
+```{python}
+sales = pd.read_csv("data/sales_subset.csv")
+sales.shape
+```
+
+* 看一下內容：  
+
+```{python}
+sales.head()
+```
+
+* 看一下overall:  
+
+```{python}
+sales.info()
+```
+
+* 算出"weekly_sales"的mean  
+
+```{python}
+sales["weekly_sales"].mean()
+```
+
+* 先定義四分位差，然後去計算temperature_c, fuel_price_usd_per_l, unemployment的四分位差  
+
+```{python}
+import numpy as np
+def iqr(x):
+  return x.quantile(0.75) - x.quantile(0.25)
+
+sales[["temperature_c", "fuel_price_usd_per_l", "unemployment"]].agg([iqr, np.mean, np.min, np.max])
+```
+
+### group_by + summarise  
+
+* 我想先group_by "type(A, B, C)"，再計算weekly_sales的sum  
+
+```{python}
+tt_series = sales.groupby("type")["weekly_sales"].sum()
+print(tt_series)
+print(type(tt_series))
+```
+
+```{python}
+tt_df = sales.groupby("type")[["weekly_sales"]].sum()
+print(tt_df)
+print(type(tt_df))
+```
+
+* 我想by "type"+"is_holiday"，去算出weekly_sales的sum, min, max  
+
+```{python}
+tt_group = sales.groupby(["type", "is_holiday"])["weekly_sales"].agg([np.min, np.max])
+print(tt_group)
+print(type(tt_group))
+```
+
+## slice by .loc[列名, 行名] and .iloc[列數, 行數]
+
+-   loc and iloc是pandas的method，所以是用`data.loc[列名,行名]`, `data.iloc[列index,行index]`來運作
+
++-------------------------------------------------------------+---------------------------------------------+
+| 說明                                                        | pandas                                      |
++=============================================================+=============================================+
+| 取[某列,某行]，得value (此時不再是df type)                  | df.loc["列名1","行名2"]                     |
++-------------------------------------------------------------+---------------------------------------------+
+| 若要維持df type，要加中括號                                 | df.loc[["列名1"],["行名2"]]                 |
++-------------------------------------------------------------+---------------------------------------------+
+| 取多個列，多個行                                            | df.loc[["列名1","列名2"],["行名2","行名2"]] |
++-------------------------------------------------------------+---------------------------------------------+
+| 若要取多個列就好，行我全要                                  | 錯誤: df.loc[[列名1, 列名2], :]             |
+|                                                             |                                             |
+|                                                             | 正確: df.loc[[列名1, 列名2]]                |
++-------------------------------------------------------------+---------------------------------------------+
+| 若要取多個行就好，列我全要                                  | df.loc[:, [行名1, 行名2]]                   |
++-------------------------------------------------------------+---------------------------------------------+
+| .iloc就是把列名全改成列數(0開始), 行名全改成行數(0開始)就好 | df.iloc[0,2] \# 返回value                   |
+|                                                             |                                             |
+|                                                             | df.iloc[[0],[2]] \# 返回df type             |
+|                                                             |                                             |
+|                                                             | df.iloc[[0,2], [0,1]] \#多列多行            |
+|                                                             |                                             |
+|                                                             | df.iloc[[0,2]] \# 多列                      |
+|                                                             |                                             |
+|                                                             | df.iloc[:, [0,1]] \# 多行                   |
++-------------------------------------------------------------+---------------------------------------------+
+
+-   這邊先讀個檔，複習這兩種用法：
+
+```{python}
+cars = pd.read_csv("data/cars.csv", index_col=0)
+cars
+```
+
+-   可以看到最左邊有rownames, 每個column有colnames
+
+### 取某列某行(得到value, 非df type)
+
+-   抓出列名是JAP, 行名是drives\_right的資料
+
+```{python}
+print(cars.loc["JAP","drives_right"])
+```
+
+```{python}
+print(cars.iloc[2,2])
+```
+
+-   此時的結果，都會幫你reduce到最小的資料結構，這邊是boolean。如果我想保留dataframe的格式，那我就都要加中括號
+
+### 取某列某行(得到df type)
+
+```{python}
+print(cars.loc[["JAP"],["drives_right"]])
+```
+
+```{python}
+print(cars.iloc[[2],[2]])
+```
+
+### 取多列多行
+
+-   抓出列名是RU, MOR，行名是drives\_right的資料
+
+```{python}
+print(cars.loc[["RU", "MOR"],["drives_right"]])
+```
+
+```{python}
+print(cars.iloc[[4, 5],[2]])
+```
+
+### 取多個列就好，行我全要
+
+-   取US, JAP, RU這三個列
+
+```{python}
+cars.loc[["US", "JAP", "RU"]]
+```
+
+-   要注意，不要寫成`cars.loc[["US", "JAP", "RU"], :]`
+
+### 取多個行就好，列我全要
+
+-   取cars\_per\_cap和drives\_right
+
+```{python}
+cars.loc[:,["cars_per_cap","drives_right"]]
+```
+
+-   要注意，不要寫成`cars.loc[["cars_per_cap","drives_right"]]`
+
+## Indexing
+
+-   簡單講，就是把某個column，設成row index，那接下來就可以用.loc[[列名1, 列名2]]來進行filter
+-   更特別的是，row index可以接受multi-column，所以當我們想篩選出類似實驗設計的多種treatment時(例如"A=1且B=2" 或 "A=2且B=3")，特別適合用這種方式來篩選。
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| 說明                                                                                                                                                     | pandas indexing                                   |
++==========================================================================================================================================================+===================================================+
+|                                                                                                                                                          |     # set a column as index                       |
+|                                                                                                                                                          |     df_ind = df.set_index("grade")                |
+|                                                                                                                                                          |     # remove an index                             |
+|                                                                                                                                                          |     df_orig = df_ind.reset_index()                |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| filter(df, grade == "1")                                                                                                                                 |     df_ind = df.set_index("grade")                |
+|                                                                                                                                                          |     df_ind.loc["1"]                               |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| filter(df, grade %in% c("1", "3"))                                                                                                                       |     df_ind = df.set_index("grade")                |
+|                                                                                                                                                          |     df_ind.loc[["1", "3"]]                        |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+|                                                                                                                                                          |     df_ind = df.set_index("grade","type")         |
+|                                                                                                                                                          |     # subset inner level with tuple               |
+|                                                                                                                                                          |     df_ind.loc[("1", "A"), ("3","C")]             |
+|                                                                                                                                                          |     # subset only outer level with list           |
+|                                                                                                                                                          |     df_ind.loc[["1","3"]]                         |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| arrange(df, col1)                                                                                                                                        |     df_ind = df.set_index("col1")                 |
+|                                                                                                                                                          |     df_ind.sort_index()                           |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| arrange(df, desc(col1))                                                                                                                                  |     df_ind = df.set_index("col1")                 |
+|                                                                                                                                                          |     df_ind.sort_index(ascending = False)          |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| arrange(df, col1, desc(col2))                                                                                                                            |     df_ind = df.set_index("col1", "col2")         |
+|                                                                                                                                                          |     df_ind.sort_index(                            |
+|                                                                                                                                                          |       level = ["col1","col2"],                    |
+|                                                                                                                                                          |       ascending = [True, False]                   |
+|                                                                                                                                                          |     )                                             |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| 排序後，取連續的列                                                                                                                                       | 錯誤: df.loc[["列名2":"列名7"]]                   |
+|                                                                                                                                                          |                                                   |
+|                                                                                                                                                          | 正確: df.loc["列名2":"列名7"]                     |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| 排序後，取連續的行                                                                                                                                       | 錯誤: df.loc[:, ["行名2":"行名7"]]                |
+|                                                                                                                                                          |                                                   |
+|                                                                                                                                                          | 正確: df.loc[:, "行名2":"行名7"]                  |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+| 如果列名有兩個column(第一層叫outer, 第二層叫inner)，我想取連續的inner列，e.g. inner2\~inner3，那我就要先照outer排序，再照inner排序，然後照右邊的寫法來取 | df.loc[("outer1", "inner2"):("outer3", "inner3")] |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+|                                                                                                                                                          |                                                   |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+|                                                                                                                                                          |                                                   |
++----------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+
+
+-   讀個新的檔("temperatures.csv")來玩玩看:
+
+```{python}
+temperatures = pd.read_csv("data/temperatures.csv")
+temperatures.head()
+```
+
+-   看起來就是該country的city，在此date下的avg\_temp\_c\
+-   至於第一行的Unnamed: 0，就是index而已，原本在csv中應該就是colname為空白
+
+```{python}
+temperatures = temperatures.drop(columns=['Unnamed: 0'])
+temperatures.head()
+```
+
+-   看一下info:
+
+```{python}
+temperatures.info()
+```
+
+-   ok，不意外，date又是字串而已，簡單幫他轉一下：
+
+```{python}
+temperatures["date"] = pd.to_datetime(temperatures["date"], format = "%Y-%m-%d")
+temperatures.info()
+```
+
+### 將city欄位設為index
+
+```{python}
+temperatures_ind = temperatures.set_index("city")
+print(temperatures_ind.head())
+```
+
+-   nice，可以看到city被移到index的位子(也就是row\_name)\
+-   如果想回復原狀，就用`.reset_index()`
+
+```{python}
+temperatures_ind.reset_index().head()
+```
+
+### filter出city="Moscow"或"Saint Petersburg"
+
+```{python}
+temperatures_ind.loc[["Moscow", "Saint Petersburg"]].head()
+```
+
+-   對比於之前的寫法：
+
+```{python}
+temperatures[temperatures["city"].isin(["Moscow", "Saint Petersburg"])].head()
+```
+
+-   可以很明顯的看到，他的優點就是比原本pandas的filter法簡潔\
+
+-   但缺點是：index現在變成是data了，而且會duplicate，所以違反了"tidy data" principles，看你介不介意拉。\
+    \#\#\# filter出treatment型的資料
+
+-   接著進階一點，我想filter出country-city pair的資料(就像實驗設計時，我想filter出一種treatment的資料一樣)\
+
+-   舉例來說，我想filter出country = "Brazil"且city = "Rio De Janeiro"的資料，或country = "Pakistan"且city = "Lahore"的資料
+
+```{python}
+# 先把這兩個column都設為index
+temperatures_ind = temperatures.set_index(["country", "city"])
+temperatures_ind.head()
+```
+
+-   接著用.loc[]加上tuple來篩選
+
+```{python}
+rows_to_keep = [("Brazil", "Rio De Janeiro"), ("Pakistan","Lahore")]
+temperatures_ind.loc[rows_to_keep].head()
+```
+
+### 用.sort\_index()做排序
+
+-   接下來，做一下arrange
+-   我想直接照index做排序(所以照預設，就是先ascending country，平手時，再ascending city)
+
+```{python}
+print(temperatures_ind.sort_index())
+```
+
+-   我也可以先照city做descending排序，平手時，再照country做ascending排序
+
+```{python}
+temperatures_ind.sort_index(level = ["city", "country"], ascending = [False, True])
+```
+
+### 排序後，取連續的列(outer列)
+
+```{python}
+# Sort the index of temperatures_ind
+temperatures_srt = temperatures_ind.sort_index()
+
+# Subset rows from Pakistan to Russia
+print(temperatures_srt.loc["Pakistan":"Russia"])
+```
+
+-   注意，不要寫成`temperatures_srt.loc[["Pakistan":"Russia"]]`
+
+### 排序後，取連續的列(inner列)
+
+```{python}
+# Try to subset rows from Lahore to Moscow
+print(temperatures_srt.loc["Lahore":"Moscow"])
+
+# Subset rows from Pakistan, Lahore to Russia, Moscow
+print(temperatures_srt.loc[("Pakistan", "Lahore"):("Russia", "Moscow")])
+```
+
+-   注意，如果只寫inner level，例如寫成這樣： `temperatures_srt.loc["Lahore":"Moscow"]`，那會回給你一個空白的df
+
+### 排序後，取時間性資料
+
+-   如果今天想subset出date的資料，例如我想找出2010\~2011的資料就好，我會怎麼做？\
+-   照之前的做法會這樣：
+
+```{python}
+# Use Boolean conditions to subset temperatures for rows in 2010 and 2011
+temperatures_bool = temperatures[(temperatures["date"] >= "2010-01-01") & (temperatures["date"] <= "2011-12-31")]
+print(temperatures_bool)
+```
+
+-   那如果用現在的招，就把date移去當index，那就變成：
+
+```{python}
+# Set date as an index and sort the index
+temperatures_ind = temperatures.set_index("date").sort_index()
+
+# Use .loc[] to subset temperatures_ind for rows in 2010 and 2011
+print(temperatures_ind.loc["2010":"2011"])
+```
+
+-   good，多個練習，想看2010-08\~2011-02的資料：
+
+```{python}
+# Use .loc[] to subset temperatures_ind for rows from Aug 2010 to Feb 2011
+print(temperatures_ind.loc["2010-08":"2011-02"])
+```
+
+### subsetting by row/column number
+
+```{python}
+# Get the 23rd row, 2nd column (index positions 22 and 1).
+print(temperatures.iloc[22,1])
+
+# Get the first 5 rows (index positions 0 to 5).
+print(temperatures.iloc[:5])
+
+# Get all rows, columns 3 and 4 (index positions 2 to 4).
+print(temperatures.iloc[:,2:4])
+
+# Get the first 5 rows, columns 3 and 4.
+print(temperatures.iloc[:5, 2:4])
+```
+
+## pivot table
+
+### Intro
+
+-   pandas有個dplyr沒有的優點，就是他可以做excel的樞紐分析表\
+-   最簡單的例子，就是你可以指定table的row是性別，col是年級，然後cell是去算該性別該年級下的平均成績之類的
+
++--------------------+-----------------------------------------------+
+| dplyr無, Excel樞紐 | pandas                                        |
++====================+===============================================+
+|                    |     df.pivot_table(                           |
+|                    |       index = cat_col1, #row                  |
+|                    |       columns = cat_col2, #col                |
+|                    |       values = con_col, #cell要by誰做計算     |
+|                    |       aggfunc = np.mean, #計算用的function    |
+|                    |       margins = True #是否要算overall row/col |
+|                    |     )                                         |
++--------------------+-----------------------------------------------+
+
+-   例如，我想by "type" + "is\_holiday" 去算平均"weekly\_sales"
+
+```{python}
+sales.pivot_table(
+    index = "type", # pivot table的row要放啥
+    columns = "is_holiday", # pivot table的column要放啥
+    values = "weekly_sales", # pivot table 的 cell ，要對哪個變數做計算
+    aggfunc = np.mean # 計算的function要用甚麼
+)
+```
+
+-   如果我想算marginal mean，那就：
+
+```{python}
+sales.pivot_table(
+    index = "type", # pivot table的row要放啥
+    columns = "is_holiday", # pivot table的column要放啥
+    values = "weekly_sales", # pivot table 的 cell ，要對哪個變數做計算
+    aggfunc = np.mean, # 計算的function要用甚麼
+    margins= True
+)
+```
+
+-   如果cross的地方，沒有數據，他的預設會是NA。例如：by "department"+"type"去計算平均"weekly\_sales"
+
+```{python}
+sales.pivot_table(
+  index = "department",
+  columns = "type",
+  values = "weekly_sales",
+  aggfunc= np.mean
+)
+```
+
+-   可以發現右下角出現NaN\
+-   如果你想用數值來fill這個NaN，可以用`fill_value =`這個指令
+
+```{python}
+sales.pivot_table(
+  index = "department",
+  columns = "type",
+  values = "weekly_sales",
+  aggfunc= np.mean,
+  fill_value = 0
+)
+```
+
+-   再來練習下一個題目，用"temperatures.csv"的資料\
+-   我想看：各city/各年，的平均溫度\
+-   而原始資料中，沒有"年"這個column，只有"date"這個column("yyyy-mm-dd")，所以我要再擷取出year的資訊
+
+```{python}
+# Add a year column to temperatures
+temperatures["year"] = temperatures["date"].dt.year
+
+# Pivot avg_temp_c by country and city vs year
+temp_by_country_city_vs_year = temperatures.pivot_table(index = ["country","city"], columns = "year", values = "avg_temp_c")
+
+# See the result
+print(temp_by_country_city_vs_year)
+```
+
+### subsetting pivot table
+
+-   那因為pivot table他就是一個pandas dataframe，所以你也可以用.loc去subset他，
+-   例如，我想subset出country從"Egypt"到"India"的資料
+
+```{python}
+# Subset for Egypt to India
+temp_by_country_city_vs_year.loc["Egypt":"India"]
+```
+
+-   我想subset出country-city從"Egypt-Cairo" 到 "India-Delhi"
+
+```{python}
+# Subset for Egypt, Cairo to India, Delhi
+temp_by_country_city_vs_year.loc[("Egypt","Cairo"):("India","Delhi")]
+```
+
+-   綜合行和列，subset出country-city從"Egypt-Cairo" 到 "India-Delhi"，以及年份從2005\~2010的資料：
+
+```{python}
+# From Egypt, Cairo to India, Delhi, and 2005 to 2010.
+temp_by_country_city_vs_year.loc[("Egypt","Cairo"):("India","Delhi"),"2005":"2010"]
+```
+
+### Calculating on a pivot table
+
+-   因為pivot table還是pandas dataframe，所以你也可以對他做運算\
+-   例如：這邊想做colmean和rowmean\
+-   先看column mean，用的語法是 `df.mean(axis = 0)`\
+-   例如，我們看看各年的溫度：
+
+```{python}
+# Get the worldwide mean temp by year
+mean_temp_by_year = temp_by_country_city_vs_year.mean(axis = 0)
+print(mean_temp_by_year)
+```
+
+-   挑出最大值的那年
+
+```{python}
+# Filter for the year that had the highest mean temp
+print(mean_temp_by_year[mean_temp_by_year == mean_temp_by_year.max()])
+```
+
+-   接著，看各city的溫度：
+
+```{python}
+# Get the mean temp by city
+mean_temp_by_city = temp_by_country_city_vs_year.mean(axis = 1)
+print(mean_temp_by_city)
+```
+
+-   找最低溫的city
+
+```{python}
+# Filter for the city that had the lowest mean temp
+print(mean_temp_by_city[mean_temp_by_city==mean_temp_by_city.min()])
+```
+
+## Visualizing DataFrame  
+
+```{python}
+import pickle
+import matplotlib.pyplot as plt
+```
+
+
+-   先讀一個資料集進來"avoplotto.pkl"
+
+```{python}
+with open("data/avoplotto.pkl", "rb") as file:
+  avocados = pickle.load(file)
+```
+
+```{python}
+print(type(avocados))
+avocados.head()
+```
+
+-   avocado是酪梨，這筆資料是想了解酪梨在USA的供需狀況\
+-   size是指酪梨的大小，分成三類(small, large, extra\_large)\
+-   type有兩種(organic, conventional)\
+-   所以這筆資料，等於是看該類型該size的酪梨，在那個date下的賣價(avg\_price)，以及賣出多少個(nb\_sold = number sold)
+
+### Bar
+
+-   我想了解，不同size，總計賣出多少個？
+
+```{python}
+nb_sold_by_size = avocados.groupby("size")["nb_sold"].sum()
+print(nb_sold_by_size)
+```
+
+-   別忘了，你summarise的方式是是對某個column做sum method，所以結果是series，不是dataframe!!
+
+```{python}
+print(type(nb_sold_by_size))
+```
+
+-   畫成bar plot
+
+```{python}
+nb_sold_by_size.plot(kind = "bar", #不需要指定x軸是啥，y軸是啥，因為你現在只是個series
+                     title = "hahaha", 
+                     rot = 45)
+plt.show()
+```
+
+-   看起來，small是賣最好的，但和large沒有差太多，而extra\_large則少非常多
+
+### Line plot
+
+-   我想看一下，售出數量隨時間的變化
+
+```{python}
+nb_sold_by_date = avocados.groupby("date")["nb_sold"].sum()
+print(nb_sold_by_date.head())
+```
+
+-   別忘了，現在是series，不是dataframe
+
+```{python}
+print(type(nb_sold_by_date))
+```
+
+-   畫趨勢圖吧：
+
+```{python}
+nb_sold_by_date.plot(kind = "line", rot = 45)
+plt.show()
+```
+
+### scatter plot
+
+-   我想看看供需之間的關係，所以我想看賣出的數量(nb\_sold)，與賣出的價錢(avg\_price)的關係：
+
+```{python}
+avocados.plot(x = "nb_sold",
+              y = "avg_price",
+              kind = "scatter",
+              title = "Number of avocados sold vs. average price")
+plt.show()
+```
+
+-   看起來賣越多的時候，價格就降下來了
+
+### Histogram
+
+#### single histogram
+
+-   我如果想看賣出價格的分布，我可以這樣做：
+
+```{python}
+avocados["avg_price"].hist(bins = 20)
+plt.show()
+```
+
+#### multiple histogram
+
+-   如果我想比較兩個分布，例如，我想看conventional酪梨的價格分布，和organic酪梨的價格分布有啥不同：
+
+```{python}
+# Histogram of conventional avg_price 
+avocados[avocados["type"] == "conventional"]["avg_price"].hist(bins = 20, alpha = 0.5)
+
+# Histogram of organic avg_price
+avocados[avocados["type"] == "organic"]["avg_price"].hist(bins = 20, alpha = 0.5)
+
+# Add a legend
+plt.legend(["conventional", "organic"])
+
+# Show the plot
+plt.show()
+```
+
+## Missing values
+
+-   先來做個假資料：
+
+```{python}
+sub_avocados = avocados.iloc[:4]
+sub_avocados.iloc[1,[3,5]] = float("NaN")
+sub_avocados.iloc[[0,2],2] = float("NaN")
+sub_avocados
+```
+
+-   可以看到有NA在裡面了
+
+### Finding missing values
+
+-   看dataframe哪個cell有NA
+
+```{python}
+sub_avocados.isna()
+```
+
+-   看df各個column有沒有NA
+
+```{python}
+sub_avocados.isna().any()
+```
+
+-   看df各個column的NA總數
+
+```{python}
+sub_avocados.isna().sum()
+```
+
+-   畫個bar chart看一下：
+
+```{python}
+sub_avocados.isna().sum().plot(kind = "bar")
+```
+
+### Remove NA
+
+-   如果要留下complete cases，可用pandas的`.dropna()`指令
+
+```{python}
+avocados_complete = sub_avocados.dropna()
+print(avocados_complete)
+```
+
+-   只剩這一個case了
+
+### Replacing NA
+
+-   這邊只教了最簡單的，遺漏值全補0
+
+```{python}
+avocados_fill_zero = sub_avocados.fillna(0)
+print(avocados_fill_zero)
+```
+
+-   呵呵，很怪吧! 這只適用在，補0有意義的地方，例如，nb\_sold如果是因為沒有賣出任何酪梨時，會寫NA，那這時補0就是對的\
+-   詳細的處理missing value的方法，留待data cleaning的章節再來好好講

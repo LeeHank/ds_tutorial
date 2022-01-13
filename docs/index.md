@@ -1,14 +1,14 @@
 --- 
 title: "Data Science Tutorial"
 author: "Hank Lee"
-date: "2022-01-13"
+date: "2022-01-14"
 site: bookdown::bookdown_site
 documentclass: book
 description: |
   This is a cookbook of data science.
 ---
 
-# Introduction {-}
+# About {-}
 
 * 這本 tutorial，是想把我熟悉的 R 語言技巧，轉換到 Python來。並著重在資料分析的領域(還不談ML)。  
 * 所以就是最無聊但也最常用的幾個 part:  
