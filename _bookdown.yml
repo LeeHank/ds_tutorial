@@ -1,0 +1,24 @@
+book_filename: "ds_tutorial"
+new_session: true
+before_chapter_script: _common.R
+delete_merged_file: true
+output_dir: docs
+language:
+  ui:
+    chapter_name: "Chapter "
+rmd_files:
+- "index.Rmd"
+# - "H_import.Rmd"
+# - "flat_files.Rmd"
+# - "DB.Rmd"
+# - "API.Rmd"
+- "H_NumPy.Rmd"
+- "numpy_basics.Rmd"
+# - "H_Pandas.Rmd"
+# - "dplyr_relevance.Rmd"
+# - "stringr_relevance.Rmd"
+# - "lubridate_relevance.Rmd"
+# - "H_Visualization.Rmd"
+# - "matplotlib.Rmd"
+# - "ggplot_relevance.Rmd"
+# - "plotly_relevance.Rmd"

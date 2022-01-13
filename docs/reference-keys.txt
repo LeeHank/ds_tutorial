@@ -1,0 +1,12 @@
+numpy-basics
+why-numpy
+多層-list-的介紹
+層-list
+層-list-1
+層-list-2
+ndarray-的-dim-shape-與-axis
+d-array-0-dim-array-0階張量-0層的資料結構
+階張量-1d-array
+階張量-2d-array
+階張量-3d-array
+階張量-4d-array
