@@ -1,7 +1,7 @@
 --- 
 title: "Data Science Tutorial"
 author: "Hank Lee"
-date: "2022-01-14"
+date: "2022-01-15"
 site: bookdown::bookdown_site
 documentclass: book
 description: |

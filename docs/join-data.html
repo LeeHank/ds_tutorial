@@ -62,19 +62,19 @@
 <h1>
 <span class="header-section-number">8</span> Join data<a class="anchor" aria-label="anchor" href="#join-data"><i class="fas fa-link"></i></a>
 </h1>
-<div class="sourceCode" id="cb195"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb195-1"><a href="join-data.html#cb195-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code></pre></div>
+<div class="sourceCode" id="cb284"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb284-1"><a href="join-data.html#cb284-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code></pre></div>
 <ul>
 <li><p>Chicago provides a list of taxicab owners and vehicles licensed to operate within the city, for public safety. Your goal is to merge two tables together.</p></li>
 <li><p>手邊現在有兩個table，一個是<code>taxi_owners</code>，裡面是計程車行的相關資訊，如下：</p></li>
 </ul>
-<div class="sourceCode" id="cb196"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb196-1"><a href="join-data.html#cb196-1" aria-hidden="true" tabindex="-1"></a>taxi_owners <span class="op">=</span> pd.read_pickle(<span class="vs">r"data/taxi_owners.p"</span>)</span>
-<span id="cb196-2"><a href="join-data.html#cb196-2" aria-hidden="true" tabindex="-1"></a>taxi_owners.head()</span>
-<span id="cb196-3"><a href="join-data.html#cb196-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      rid   vid           owner                 address    zip</span></span>
-<span id="cb196-4"><a href="join-data.html#cb196-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0  T6285  6285  AGEAN TAXI LLC     4536 N. ELSTON AVE.  60630</span></span>
-<span id="cb196-5"><a href="join-data.html#cb196-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  T4862  4862    MANGIB CORP.  5717 N. WASHTENAW AVE.  60659</span></span>
-<span id="cb196-6"><a href="join-data.html#cb196-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  T1495  1495   FUNRIDE, INC.     3351 W. ADDISON ST.  60618</span></span>
-<span id="cb196-7"><a href="join-data.html#cb196-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  T4231  4231    ALQUSH CORP.   6611 N. CAMPBELL AVE.  60645</span></span>
-<span id="cb196-8"><a href="join-data.html#cb196-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  T5971  5971  EUNIFFORD INC.     3351 W. ADDISON ST.  60618</span></span></code></pre></div>
+<div class="sourceCode" id="cb285"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb285-1"><a href="join-data.html#cb285-1" aria-hidden="true" tabindex="-1"></a>taxi_owners <span class="op">=</span> pd.read_pickle(<span class="vs">r"data/taxi_owners.p"</span>)</span>
+<span id="cb285-2"><a href="join-data.html#cb285-2" aria-hidden="true" tabindex="-1"></a>taxi_owners.head()</span>
+<span id="cb285-3"><a href="join-data.html#cb285-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      rid   vid           owner                 address    zip</span></span>
+<span id="cb285-4"><a href="join-data.html#cb285-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0  T6285  6285  AGEAN TAXI LLC     4536 N. ELSTON AVE.  60630</span></span>
+<span id="cb285-5"><a href="join-data.html#cb285-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  T4862  4862    MANGIB CORP.  5717 N. WASHTENAW AVE.  60659</span></span>
+<span id="cb285-6"><a href="join-data.html#cb285-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  T1495  1495   FUNRIDE, INC.     3351 W. ADDISON ST.  60618</span></span>
+<span id="cb285-7"><a href="join-data.html#cb285-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  T4231  4231    ALQUSH CORP.   6611 N. CAMPBELL AVE.  60645</span></span>
+<span id="cb285-8"><a href="join-data.html#cb285-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  T5971  5971  EUNIFFORD INC.     3351 W. ADDISON ST.  60618</span></span></code></pre></div>
 <ul>
 <li>表中各欄位意義：
 <ul>
@@ -88,21 +88,21 @@
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb197"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb197-1"><a href="join-data.html#cb197-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(taxi_owners[<span class="st">"vid"</span>].drop_duplicates())</span>
-<span id="cb197-2"><a href="join-data.html#cb197-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3519</span></span></code></pre></div>
-<div class="sourceCode" id="cb198"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb198-1"><a href="join-data.html#cb198-1" aria-hidden="true" tabindex="-1"></a>taxi_owners.shape</span>
-<span id="cb198-2"><a href="join-data.html#cb198-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (3519, 5)</span></span></code></pre></div>
+<div class="sourceCode" id="cb286"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb286-1"><a href="join-data.html#cb286-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(taxi_owners[<span class="st">"vid"</span>].drop_duplicates())</span>
+<span id="cb286-2"><a href="join-data.html#cb286-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3519</span></span></code></pre></div>
+<div class="sourceCode" id="cb287"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb287-1"><a href="join-data.html#cb287-1" aria-hidden="true" tabindex="-1"></a>taxi_owners.shape</span>
+<span id="cb287-2"><a href="join-data.html#cb287-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (3519, 5)</span></span></code></pre></div>
 <ul>
 <li>另一個是<code>taxi_vehicles</code>，是計程車的車子的相關資訊</li>
 </ul>
-<div class="sourceCode" id="cb199"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb199-1"><a href="join-data.html#cb199-1" aria-hidden="true" tabindex="-1"></a>taxi_vehicles <span class="op">=</span> pd.read_pickle(<span class="vs">r"data/taxi_vehicles.p"</span>)</span>
-<span id="cb199-2"><a href="join-data.html#cb199-2" aria-hidden="true" tabindex="-1"></a>taxi_vehicles.head()</span>
-<span id="cb199-3"><a href="join-data.html#cb199-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     vid    make   model  year fuel_type                owner</span></span>
-<span id="cb199-4"><a href="join-data.html#cb199-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0  2767  TOYOTA   CAMRY  2013    HYBRID       SEYED M. BADRI</span></span>
-<span id="cb199-5"><a href="join-data.html#cb199-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1411  TOYOTA    RAV4  2017    HYBRID          DESZY CORP.</span></span>
-<span id="cb199-6"><a href="join-data.html#cb199-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  6500  NISSAN  SENTRA  2019  GASOLINE       AGAPH CAB CORP</span></span>
-<span id="cb199-7"><a href="join-data.html#cb199-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  2746  TOYOTA   CAMRY  2013    HYBRID  MIDWEST CAB CO, INC</span></span>
-<span id="cb199-8"><a href="join-data.html#cb199-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  5922  TOYOTA   CAMRY  2013    HYBRID       SUMETTI CAB CO</span></span></code></pre></div>
+<div class="sourceCode" id="cb288"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb288-1"><a href="join-data.html#cb288-1" aria-hidden="true" tabindex="-1"></a>taxi_vehicles <span class="op">=</span> pd.read_pickle(<span class="vs">r"data/taxi_vehicles.p"</span>)</span>
+<span id="cb288-2"><a href="join-data.html#cb288-2" aria-hidden="true" tabindex="-1"></a>taxi_vehicles.head()</span>
+<span id="cb288-3"><a href="join-data.html#cb288-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     vid    make   model  year fuel_type                owner</span></span>
+<span id="cb288-4"><a href="join-data.html#cb288-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0  2767  TOYOTA   CAMRY  2013    HYBRID       SEYED M. BADRI</span></span>
+<span id="cb288-5"><a href="join-data.html#cb288-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  1411  TOYOTA    RAV4  2017    HYBRID          DESZY CORP.</span></span>
+<span id="cb288-6"><a href="join-data.html#cb288-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  6500  NISSAN  SENTRA  2019  GASOLINE       AGAPH CAB CORP</span></span>
+<span id="cb288-7"><a href="join-data.html#cb288-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  2746  TOYOTA   CAMRY  2013    HYBRID  MIDWEST CAB CO, INC</span></span>
+<span id="cb288-8"><a href="join-data.html#cb288-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  5922  TOYOTA   CAMRY  2013    HYBRID       SUMETTI CAB CO</span></span></code></pre></div>
 <ul>
 <li>欄位說明如下：
 <ul>
@@ -119,14 +119,14 @@
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb200"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb200-1"><a href="join-data.html#cb200-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the taxi_owners and taxi_veh tables setting a suffix</span></span>
-<span id="cb200-2"><a href="join-data.html#cb200-2" aria-hidden="true" tabindex="-1"></a>taxi_own_veh <span class="op">=</span> taxi_owners.merge(taxi_vehicles, on<span class="op">=</span><span class="st">'vid'</span>, suffixes<span class="op">=</span>[<span class="st">"_own"</span>, <span class="st">"_veh"</span>])</span>
-<span id="cb200-3"><a href="join-data.html#cb200-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb200-4"><a href="join-data.html#cb200-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the column names of taxi_own_veh</span></span>
-<span id="cb200-5"><a href="join-data.html#cb200-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(taxi_own_veh.columns)</span>
-<span id="cb200-6"><a href="join-data.html#cb200-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Index(['rid', 'vid', 'owner_own', 'address', 'zip', 'make', 'model', 'year',</span></span>
-<span id="cb200-7"><a href="join-data.html#cb200-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        'fuel_type', 'owner_veh'],</span></span>
-<span id="cb200-8"><a href="join-data.html#cb200-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       dtype='object')</span></span></code></pre></div>
+<div class="sourceCode" id="cb289"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb289-1"><a href="join-data.html#cb289-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge the taxi_owners and taxi_veh tables setting a suffix</span></span>
+<span id="cb289-2"><a href="join-data.html#cb289-2" aria-hidden="true" tabindex="-1"></a>taxi_own_veh <span class="op">=</span> taxi_owners.merge(taxi_vehicles, on<span class="op">=</span><span class="st">'vid'</span>, suffixes<span class="op">=</span>[<span class="st">"_own"</span>, <span class="st">"_veh"</span>])</span>
+<span id="cb289-3"><a href="join-data.html#cb289-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb289-4"><a href="join-data.html#cb289-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the column names of taxi_own_veh</span></span>
+<span id="cb289-5"><a href="join-data.html#cb289-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(taxi_own_veh.columns)</span>
+<span id="cb289-6"><a href="join-data.html#cb289-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Index(['rid', 'vid', 'owner_own', 'address', 'zip', 'make', 'model', 'year',</span></span>
+<span id="cb289-7"><a href="join-data.html#cb289-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        'fuel_type', 'owner_veh'],</span></span>
+<span id="cb289-8"><a href="join-data.html#cb289-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       dtype='object')</span></span></code></pre></div>
 <div id="one-to-many" class="section level2" number="8.1">
 <h2>
 <span class="header-section-number">8.1</span> One to many<a class="anchor" aria-label="anchor" href="#one-to-many"><i class="fas fa-link"></i></a>
@@ -139,25 +139,25 @@
 <h2>
 <span class="header-section-number">8.2</span> multiple match<a class="anchor" aria-label="anchor" href="#multiple-match"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb201"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb201-1"><a href="join-data.html#cb201-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, on <span class="op">=</span> [<span class="st">"col1"</span>, <span class="st">"col2"</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb290"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb290-1"><a href="join-data.html#cb290-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, on <span class="op">=</span> [<span class="st">"col1"</span>, <span class="st">"col2"</span>])</span></code></pre></div>
 </div>
 <div id="left-join" class="section level2" number="8.3">
 <h2>
 <span class="header-section-number">8.3</span> left join<a class="anchor" aria-label="anchor" href="#left-join"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb202"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb202-1"><a href="join-data.html#cb202-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, on <span class="op">=</span> <span class="st">"col1"</span>, how <span class="op">=</span> <span class="st">"left"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb291"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb291-1"><a href="join-data.html#cb291-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, on <span class="op">=</span> <span class="st">"col1"</span>, how <span class="op">=</span> <span class="st">"left"</span>)</span></code></pre></div>
 </div>
 <div id="left_id-match-right_id" class="section level2" number="8.4">
 <h2>
 <span class="header-section-number">8.4</span> left_id match right_id<a class="anchor" aria-label="anchor" href="#left_id-match-right_id"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb203"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb203-1"><a href="join-data.html#cb203-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, how <span class="op">=</span> <span class="st">"left"</span>, left_on <span class="op">=</span> <span class="st">"left_id"</span>, right_on <span class="op">=</span> <span class="st">"right_id"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb292"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb292-1"><a href="join-data.html#cb292-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, how <span class="op">=</span> <span class="st">"left"</span>, left_on <span class="op">=</span> <span class="st">"left_id"</span>, right_on <span class="op">=</span> <span class="st">"right_id"</span>)</span></code></pre></div>
 </div>
 <div id="outer-join-full-join" class="section level2" number="8.5">
 <h2>
 <span class="header-section-number">8.5</span> outer join == full join<a class="anchor" aria-label="anchor" href="#outer-join-full-join"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb204"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb204-1"><a href="join-data.html#cb204-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, how <span class="op">=</span> <span class="st">"outer"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb293"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb293-1"><a href="join-data.html#cb293-1" aria-hidden="true" tabindex="-1"></a>df1.merge(df2, how <span class="op">=</span> <span class="st">"outer"</span>)</span></code></pre></div>
 <p>##　自己join自己蠻有趣的，可以整理一下</p>
 </div>
 <div id="mutating-joins" class="section level2" number="8.6">
@@ -215,7 +215,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Data Science Tutorial</strong>" was written by Hank Lee. It was last built on 2022-01-14.</p>
+    <p>"<strong>Data Science Tutorial</strong>" was written by Hank Lee. It was last built on 2022-01-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

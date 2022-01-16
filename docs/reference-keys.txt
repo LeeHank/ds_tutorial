@@ -49,6 +49,8 @@ d-array-0-dim-array-0階張量-0層的資料結構
 pandas_cheatsheet
 overview
 取colnames-rownames-values
+loc-.iloc
+indexing-another-filter-arrange-method
 selectfilterarrangemutate
 select
 filter
@@ -61,6 +63,8 @@ group_by-summarise
 group_by-summarise-1
 group_by-mutate
 group_by-filter
+group_by-arrange
+group_by-slice
 others
 distinct-unique
 slice
@@ -70,8 +74,8 @@ random-sampling-rows
 categorization
 missing-data
 pivot-table
-loc-.iloc
-indexing-another-filter-arrange-method
+字串相關的處理
+離散化的處理
 combine-variables
 combine-cases
 pandas-basics

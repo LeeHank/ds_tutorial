@@ -25,7 +25,7 @@
 
 * 首先，我們想寫一個新的file，所以要用mode = 'x'，作法如下  
 
-```{python}
+```{python eval = FALSE}
 f = open(file = 'data/test1.txt', mode = 'x')
 f.write("line1")
 f.close()
@@ -35,7 +35,7 @@ f.close()
 
 * 接著，我們除了用`f.write()`外，也可以用`f.writelines()`，那這時的input就要是個iterable物件(e.g. list)，他就會去iterate裡面的element，一個一個寫入這樣，比如：  
 
-```{python}
+```{python eval = FALSE}
 f = open("data/test2.txt", mode = "x")
 f.writelines(["I", "am", "tom-hanks"])
 f.close()
@@ -50,7 +50,7 @@ Iamtom-hanks
 * 可以發現全部黏在一起了  
 * 如果要換行，就加上"\n"就好  
 
-```{python}
+```{python eval = FALSE}
 f = open("data/test3.txt", mode = "x")
 f.writelines(["I\n", "am\n", "tom-hanks\n"])
 f.close()
@@ -78,7 +78,7 @@ f.close()
 
 * 先來試試mode = 'a'  
 
-```{python}
+```{python eval = FALSE}
 f = open('data/test3.txt', mode = 'a')
 f.write("this is new line")
 f.close()
@@ -97,7 +97,7 @@ this is new line
 
 * 如果以mode = 'w'來寫的話，他會把之前的內容全部清空，然後寫入新內容  
 
-```{python}
+```{python eval = FALSE}
 f = open('data/test3.txt', mode = 'w')
 f.write("this is another line")
 f.close()
@@ -111,7 +111,7 @@ this is another line
 
 * 然後，'w'其實是最常用的mode，因為他也可以當'x'來用。就是說，如果你原本沒有test4.txt這個檔案，那你用mode = 'w'時，他會像mode = 'x'一樣，幫你新增這個檔案，然後寫進去  
 
-```{python}
+```{python eval = FALSE}
 f = open('data/test4.txt', mode = 'w')
 f.write("Just like mode = 'x'")
 f.close()

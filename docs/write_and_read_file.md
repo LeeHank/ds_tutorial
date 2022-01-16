@@ -29,7 +29,6 @@
 ```python
 f = open(file = 'data/test1.txt', mode = 'x')
 f.write("line1")
-#> 5
 f.close()
 ```
 
@@ -87,7 +86,6 @@ f.close()
 ```python
 f = open('data/test3.txt', mode = 'a')
 f.write("this is new line")
-#> 16
 f.close()
 ```
 
@@ -108,7 +106,6 @@ this is new line
 ```python
 f = open('data/test3.txt', mode = 'w')
 f.write("this is another line")
-#> 20
 f.close()
 ```
 
@@ -124,7 +121,6 @@ this is another line
 ```python
 f = open('data/test4.txt', mode = 'w')
 f.write("Just like mode = 'x'")
-#> 20
 f.close()
 ```
 

@@ -116,18 +116,169 @@
 </tbody>
 </table></div>
 </div>
-<div id="selectfilterarrangemutate" class="section level2" number="6.3">
+<div id="loc-.iloc" class="section level2" number="6.3">
 <h2>
-<span class="header-section-number">6.3</span> select/filter/arrange/mutate<a class="anchor" aria-label="anchor" href="#selectfilterarrangemutate"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.3</span> .loc &amp; .iloc<a class="anchor" aria-label="anchor" href="#loc-.iloc"><i class="fas fa-link"></i></a>
 </h2>
-<div id="select" class="section level3" number="6.3.1">
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="56%">
+<col width="43%">
+</colgroup>
+<thead><tr class="header">
+<th>說明</th>
+<th>pandas</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>取[某列,某行]，得value (此時不再是df type)</code></td>
+<td><code>df.loc["列名1","行名2"]</code></td>
+</tr>
+<tr class="even">
+<td>若要維持df type，要加中括號</td>
+<td><code>df.loc[["列名1"],["行名2"]]</code></td>
+</tr>
+<tr class="odd">
+<td>取多個列，多個行</td>
+<td><code>df.loc[["列名1","列名2"],["行名2","行名2"]]</code></td>
+</tr>
+<tr class="even">
+<td>若要取多個列就好，行我全要</td>
+<td><pre><code>錯誤: df.loc[[列名1, 列名2], :]
+
+正確: df.loc[[列名1, 列名2]]</code></pre></td>
+</tr>
+<tr class="odd">
+<td>若要取多個行就好，列我全要</td>
+<td><code>df.loc[:, [行名1, 行名2]]</code></td>
+</tr>
+<tr class="even">
+<td>取連續的列</td>
+<td><pre><code>錯誤: df.loc[["列名2":"列名7"]]
+
+正確: df.loc["列名2":"列名7"]</code></pre></td>
+</tr>
+<tr class="odd">
+<td>排序後，取連續的行</td>
+<td><pre><code>錯誤: df.loc[:, ["行名2":"行名7"]]
+
+正確: df.loc[:, "行名2":"行名7"]</code></pre></td>
+</tr>
+<tr class="even">
+<td>.iloc就是把列名全改成列數(0開始), 行名全改成行數(0開始)就好</td>
+<td><pre><code>df.iloc[0,2] # 返回value
+df.iloc[[0],[2]] # 返回df type
+df.iloc[[0,2], [0,1]] #多列多行
+df.iloc[[0,2]] # 多列
+df.iloc[:, [0,1]] # 多行</code></pre></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="indexing-another-filter-arrange-method" class="section level2" number="6.4">
+<h2>
+<span class="header-section-number">6.4</span> indexing (another filter &amp; arrange method)<a class="anchor" aria-label="anchor" href="#indexing-another-filter-arrange-method"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><p>簡單講，就是把某個column，設成row index，那接下來就可以用<code>.loc[[列名1, 列名2]]</code> 來進行filter</p></li>
+<li><p>更特別的是，row index可以接受multi-column，所以當我們想篩選出類似實驗設計的多種treatment時(例如”A=1且B=2” 或 “A=2且B=3”)，特別適合用這種方式來篩選。</p></li>
+</ul>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="45%">
+<col width="54%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>說明</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>
+<p>將欄位 a 設成 index</p>
+<p>將 index 回覆成欄位</p>
+</td>
+<td>
+<p>df_ind = df.set_index(“a”)</p>
+<p>df_orig = df_ind.reset_index()</p>
+</td>
+</tr>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  filter(a == 1)</code></pre></td>
+<td><pre><code>df \
+  .set_index("a") \
+  .loc["1"] \
+  .reset_index()</code></pre></td>
+</tr>
+<tr class="even">
+<td><pre><code>df %&gt;%
+  filter(a %in% c("1","2"))</code></pre></td>
+<td><pre><code>df \
+  .set_index("a") \
+  .loc[["1","2"]] \
+  .reset_index()</code></pre></td>
+</tr>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  filter(
+    (a == 1 &amp; b == 2) |
+    (a == 3 &amp; b == 5)
+  )</code></pre></td>
+<td><pre><code>df \
+  .set_index("a","b") \
+  .loc[(1,2), (3,5)] \
+  .reset_index()</code></pre></td>
+</tr>
+<tr class="even">
+<td><pre><code>df %&gt;%
+  arrange(a)</code></pre></td>
+<td><pre><code>df \
+  .set_index("a") \
+  .sort_index() \
+  .reset_index()</code></pre></td>
+</tr>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  arrange(desc(a))</code></pre></td>
+<td><pre><code>df \
+  .set_index("a") \
+  .sort_index() \
+  .reset_index(ascending = False)</code></pre></td>
+</tr>
+<tr class="even">
+<td><pre><code>df %&gt;%
+  arrange(a, desc(b))</code></pre></td>
+<td><pre><code>df \
+  .set_index("a", "b") \
+  .sort_index(
+    level = ["a","b"],
+    ascending = [True, False]
+  )</code></pre></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="selectfilterarrangemutate" class="section level2" number="6.5">
+<h2>
+<span class="header-section-number">6.5</span> select/filter/arrange/mutate<a class="anchor" aria-label="anchor" href="#selectfilterarrangemutate"><i class="fas fa-link"></i></a>
+</h2>
+<div id="select" class="section level3" number="6.5.1">
 <h3>
-<span class="header-section-number">6.3.1</span> select<a class="anchor" aria-label="anchor" href="#select"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.5.1</span> select<a class="anchor" aria-label="anchor" href="#select"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="42%">
-<col width="57%">
+<col width="35%">
+<col width="64%">
 </colgroup>
 <thead><tr class="header">
 <th>dplyr</th>
@@ -135,79 +286,91 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>select(df, col1)</td>
-<td>df[“col1”]是series, df[[“col1”]]是df</td>
+<td><pre><code>df %&gt;%
+  select(col1)</code></pre></td>
+<td><pre><code>df["col1"] # series
+df[["col1"]] # df</code></pre></td>
 </tr>
 <tr class="even">
-<td>select(df, col1, col2)</td>
-<td>df[[“col1”, “col2”]]</td>
+<td><pre><code>df %&gt;%
+  select(col1, col2)</code></pre></td>
+<td><pre><code>df[["col1", "col2"]]</code></pre></td>
 </tr>
 <tr class="odd">
-<td>select(df, col1:col3)</td>
-<td>df.loc[:, “col1”:“col3”]</td>
+<td><pre><code>df %&gt;%
+  select(col1:col3)</code></pre></td>
+<td><pre><code>df.loc[:, "col1":"col3"]</code></pre></td>
 </tr>
 <tr class="even">
-<td>df[,1:3]</td>
-<td>df.iloc[:, 0:3] # from:stop</td>
+<td><pre><code>df[,1:3]</code></pre></td>
+<td><pre><code>df.iloc[:, 0:3] # from:stop</code></pre></td>
 </tr>
 <tr class="odd">
-<td>
-<p>n = ncol(df)</p>
-<p>df[, (n-3):n]</p>
-</td>
-<td>df.iloc[:, -3:]</td>
+<td><pre><code>n = ncol(df)
+df[, (n-3):n]</code></pre></td>
+<td><pre><code>df.iloc[:, -3:]</code></pre></td>
 </tr>
 <tr class="even">
-<td>select(df, where(is.numeric))</td>
-<td>df.select_dtypes(include = [“int”,“float”])</td>
+<td><pre><code>df %&gt;%
+  select(where(is.numeric))</code></pre></td>
+<td><pre><code>df \
+  .select_dtypes(
+    include = ["int","float"]
+  )</code></pre></td>
 </tr>
 <tr class="odd">
-<td>select(df, where(!is.numeric))</td>
-<td>df.select_dtypes(exclude = [“int”, “float”]</td>
+<td><pre><code>df %&gt;%
+  select(where(!is.numeric))</code></pre></td>
+<td><pre><code>df \
+  .select_dtypes(
+    exclude = ["int","float"]
+  )</code></pre></td>
 </tr>
 <tr class="even">
-<td>select(df, -c(col1, col2))</td>
-<td>df.drop([“col1”, “col2”], axis =1)</td>
+<td><pre><code>df %&gt;%
+  select(-c(col1, col2))</code></pre></td>
+<td><pre><code>df.drop(["col1", "col2"], axis =1)</code></pre></td>
 </tr>
 <tr class="odd">
-<td>select(df, -(col1:col3))</td>
+<td><pre><code>df %&gt;%
+  select(-(col1:col3))</code></pre></td>
 <td>QQ</td>
 </tr>
 <tr class="even">
-<td>select(df, col3, everything())</td>
-<td>
-<p>my_list = df.columns.tolist()</p>
-<p>my_list.remove(“col3”)</p>
-<p>new_order = [“col3”, *my_list]</p>
-<p>df[new_order]</p>
-</td>
+<td><pre><code>df %&gt;%
+  select(col3, everything())</code></pre></td>
+<td><pre><code>my_list = df.columns.tolist()
+my_list.remove("col3")
+new_order = ["col3", *my_list]
+df[new_order]</code></pre></td>
 </tr>
 <tr class="odd">
-<td>select(df, col3, col5, everything())</td>
+<td><pre><code>df %&gt;%
+  select(col3, col5, everything())</code></pre></td>
 <td>
-<p>my_list = df.columns.tolist()</p>
-<p>front = [“col3”, “col5”]</p>
-<p>end = [col for col in my_list if col not in front]</p>
-<p>new_order = [*front, *end]</p>
-<p>df[new_order]</p>
+<pre><code>my_list = df.columns.tolist()
+front = ["col3", "col5"]
+end = [col for col in my_list if col not in front]
+new_order = [*front, *end]
+df[new_order]</code></pre>
 <hr>
-<p>front = [“col3”, “col5”]</p>
-<p>df1 = df[front]</p>
-<p>df2 = df.drop(front, axis = 1)</p>
-<p>pd.concat([df1, df2], axis = 1)</p>
+<pre><code>front = ["col3", "col5"]
+df1 = df[front]
+df2 = df.drop(front, axis = 1)
+pd.concat([df1, df2], axis = 1)</code></pre>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
-<div id="filter" class="section level3" number="6.3.2">
+<div id="filter" class="section level3" number="6.5.2">
 <h3>
-<span class="header-section-number">6.3.2</span> filter<a class="anchor" aria-label="anchor" href="#filter"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.5.2</span> filter<a class="anchor" aria-label="anchor" href="#filter"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="46%">
-<col width="53%">
+<col width="49%">
+<col width="50%">
 </colgroup>
 <thead><tr class="header">
 <th>dplyr</th>
@@ -215,30 +378,34 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>filter(df, col1 == 1)</td>
-<td>
-<p>df[df[“col1”]==1]</p>
-<p>df.query(“col1 == 1”)</p>
-</td>
+<td><pre><code>df %&gt;%
+  filter(col1 == 1)</code></pre></td>
+<td><pre><code>df[df["col1"]==1]
+df.query("col1 == 1")</code></pre></td>
 </tr>
 <tr class="even">
-<td>filter(df, col1 &gt; ymd(“2021-01-01”))</td>
-<td>
-<p>df[df[“col1”] &gt; pd.datetime(“2021-01-01”)]</p>
-<p>df.query(“col1 &gt; @pd.datetime(”2021-01-01”)“)</p>
-</td>
+<td><pre><code>df %&gt;%
+  filter(col1 &gt; ymd("2021-01-01"))</code></pre></td>
+<td><pre><code>df[df["col1"] &gt; pd.datetime("2021-01-01")]
+df.query("col1 &gt; @pd.datetime("2021-01-01")")</code></pre></td>
 </tr>
 <tr class="odd">
-<td>filter(df, col1 %in% c(“brown”, “black”))</td>
-<td>df[df[“col1”].isin([“brown”,“black”])</td>
+<td><pre><code>df %&gt;%
+  filter(col1 %in% c("brown", "black"))</code></pre></td>
+<td><pre><code>df[df["col1"].isin(["brown","black"])]</code></pre></td>
 </tr>
 <tr class="even">
-<td>filter(df, col1 == 1, col2 == 1)</td>
-<td>df[df[“col1”]==1 &amp; df[“col2”]==1]</td>
+<td><pre><code>df %&gt;%
+  filter(! (col1 %in% c("brown", "black")))</code></pre></td>
+<td><pre><code>df[-df["col1"].isin(["brown","black"])
+# python 的 - 就是R的 !</code></pre></td>
 </tr>
 <tr class="odd">
-<td>filter(df, col1 == 1, col2 == 1)</td>
-<td>df.query(“col1 == 1 &amp; col2 ==1”)</td>
+<td><pre><code>df %&gt;%
+  filter(col1 == 1, col2 == 1)</code></pre></td>
+<td><pre><code>df[df["col1"]==1 &amp; df["col2"]==1]
+
+df.query("col1 == 1 &amp; col2 ==1")</code></pre></td>
 </tr>
 <tr class="even">
 <td>head(df)</td>
@@ -249,56 +416,23 @@
 <td>df.tail()</td>
 </tr>
 <tr class="even">
-<td>df[1:5,]</td>
-<td>df.iloc[0:5,:]</td>
+<td><pre><code>df[1:5,]</code></pre></td>
+<td><pre><code>df.iloc[0:5,:]</code></pre></td>
 </tr>
 <tr class="odd">
-<td>df[c(1,3,4), c(2,5)]</td>
-<td>df.iloc[[0,2,3], [1,4]]</td>
+<td><pre><code>df[c(1,3,4), c(2,5)]</code></pre></td>
+<td><pre><code>df.iloc[[0,2,3], [1,4]]</code></pre></td>
 </tr>
 </tbody>
 </table></div>
 </div>
-<div id="arrange" class="section level3" number="6.3.3">
+<div id="arrange" class="section level3" number="6.5.3">
 <h3>
-<span class="header-section-number">6.3.3</span> arrange<a class="anchor" aria-label="anchor" href="#arrange"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.5.3</span> arrange<a class="anchor" aria-label="anchor" href="#arrange"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="34%">
-<col width="65%">
-</colgroup>
-<thead><tr class="header">
-<th>dplyr</th>
-<th>Pandas</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>arrange(df, col1)</td>
-<td>df.sort_values(“col1”)</td>
-</tr>
-<tr class="even">
-<td>arrange(df, desc(col1))</td>
-<td>df.sort_values(“col1”, ascending = False)</td>
-</tr>
-<tr class="odd">
-<td>arrange(df, col1, col2)</td>
-<td>df.sort_values([“col1”, “col2”])</td>
-</tr>
-<tr class="even">
-<td>arrange(df, col1, desc(col2))</td>
-<td>df.sort_values([“col1”,“col2”], ascending = [True, False])</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-<div id="mutate-and-rename" class="section level3" number="6.3.4">
-<h3>
-<span class="header-section-number">6.3.4</span> mutate and rename<a class="anchor" aria-label="anchor" href="#mutate-and-rename"><i class="fas fa-link"></i></a>
-</h3>
-<div class="inline-table"><table style="width:99%;" class="table table-sm">
-<colgroup>
-<col width="40%">
+<col width="41%">
 <col width="58%">
 </colgroup>
 <thead><tr class="header">
@@ -307,28 +441,82 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>mutate(df, c = a-b)</td>
-<td>
-<p>df[‘c’] = df[‘a’] - df[‘b’]</p>
-<p>df.assign(c = df[“a”]-df[“b”])</p>
-<p>df.assign(c = lambda x: x[‘a’]-x[‘b’])</p>
-</td>
+<td><pre><code>df %&gt;%
+  arrange(col1)</code></pre></td>
+<td><pre><code>df \
+  .sort_values("col1")</code></pre></td>
 </tr>
 <tr class="even">
-<td>rename(df, col_one = col1)</td>
-<td>df.rename(columns = {‘col1’:‘col_one’})</td>
+<td><pre><code>df %&gt;%
+  arrange(desc(col1))</code></pre></td>
+<td><pre><code>df \
+  .sort_values("col1", ascending = False)</code></pre></td>
+</tr>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  arrange(col1, col2)</code></pre></td>
+<td><pre><code>df \
+  .sort_values(["col1", "col2"])</code></pre></td>
+</tr>
+<tr class="even">
+<td><pre><code>df %&gt;%
+  arrange(col1, desc(col2))</code></pre></td>
+<td><pre><code>df \
+  .sort_values(
+    ["col1","col2"],
+    ascending = [True, False]
+  )</code></pre></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="mutate-and-rename" class="section level3" number="6.5.4">
+<h3>
+<span class="header-section-number">6.5.4</span> mutate and rename<a class="anchor" aria-label="anchor" href="#mutate-and-rename"><i class="fas fa-link"></i></a>
+</h3>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="35%">
+<col width="64%">
+</colgroup>
+<thead><tr class="header">
+<th>dplyr</th>
+<th>Pandas</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  mutate(c = a - b)</code></pre></td>
+<td><pre><code>df['c'] = df['a'] - df['b']
+df.assign(c = df["a"]-df["b"])</code></pre></td>
+</tr>
+<tr class="even">
+<td><pre><code>df %&gt;%
+  filter(a == "a1") %&gt;%
+  mutate(c = a - b)</code></pre></td>
+<td><pre><code>df.query("a == 'a1'") \
+  .assign(c = lambda x: x['a']-x['b'])
+# x 是 current data 的代名詞，因為這邊不是要用df['a']了</code></pre></td>
+</tr>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  rename(col_new = col_old)</code></pre></td>
+<td><pre><code>df \
+  .rename(
+    columns = {'col_old':'col_new'}
+  )</code></pre></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 </div>
-<div id="group_by-summarise" class="section level2" number="6.4">
+<div id="group_by-summarise" class="section level2" number="6.6">
 <h2>
-<span class="header-section-number">6.4</span> group_by &amp; summarise<a class="anchor" aria-label="anchor" href="#group_by-summarise"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.6</span> group_by &amp; summarise<a class="anchor" aria-label="anchor" href="#group_by-summarise"><i class="fas fa-link"></i></a>
 </h2>
-<div id="對-vectorseries-做-summarise-結果是數值" class="section level3" number="6.4.1">
+<div id="對-vectorseries-做-summarise-結果是數值" class="section level3" number="6.6.1">
 <h3>
-<span class="header-section-number">6.4.1</span> 對 vector/series 做 summarise (結果是數值)<a class="anchor" aria-label="anchor" href="#%E5%B0%8D-vectorseries-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E6%98%AF%E6%95%B8%E5%80%BC"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.6.1</span> 對 vector/series 做 summarise (結果是數值)<a class="anchor" aria-label="anchor" href="#%E5%B0%8D-vectorseries-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E6%98%AF%E6%95%B8%E5%80%BC"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <thead><tr class="header">
@@ -338,47 +526,47 @@
 <tbody>
 <tr class="odd">
 <td>mean(df$col1)</td>
-<td>df[“col1”].mean()</td>
+<td><code>df["col1"].mean()</code></td>
 </tr>
 <tr class="even">
 <td>median(df$col1)</td>
-<td>df[“col1”].median()</td>
+<td><code>df["col1"].median()</code></td>
 </tr>
 <tr class="odd">
 <td>mode(df$col1)</td>
-<td>df[“col1”].mode()</td>
+<td><code>df["col1"].mode()</code></td>
 </tr>
 <tr class="even">
 <td>min(df$col1)</td>
-<td>df[“col1”].min()</td>
+<td><code>df["col1"].min()</code></td>
 </tr>
 <tr class="odd">
 <td>max(df$col1)</td>
-<td>df[“col1”].max()</td>
+<td><code>df["col1"].max()</code></td>
 </tr>
 <tr class="even">
 <td>var(df$col1)</td>
-<td>df[“col1”].var()</td>
+<td><code>df["col1"].var()</code></td>
 </tr>
 <tr class="odd">
 <td>sd(df$col1)</td>
-<td>df.[“col1”].std()</td>
+<td><code>df.["col1"].std()</code></td>
 </tr>
 <tr class="even">
 <td>sum(df$col1)</td>
-<td>df.[“col1”].sum()</td>
+<td><code>df.["col1"].sum()</code></td>
 </tr>
 </tbody>
 </table></div>
 </div>
-<div id="對-dataframe-做-summarise-結果仍是df" class="section level3" number="6.4.2">
+<div id="對-dataframe-做-summarise-結果仍是df" class="section level3" number="6.6.2">
 <h3>
-<span class="header-section-number">6.4.2</span> 對 dataframe 做 summarise (結果仍是df)<a class="anchor" aria-label="anchor" href="#%E5%B0%8D-dataframe-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E4%BB%8D%E6%98%AFdf"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.6.2</span> 對 dataframe 做 summarise (結果仍是df)<a class="anchor" aria-label="anchor" href="#%E5%B0%8D-dataframe-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E4%BB%8D%E6%98%AFdf"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="46%">
-<col width="53%">
+<col width="58%">
+<col width="41%">
 </colgroup>
 <thead><tr class="header">
 <th>dplyr</th>
@@ -386,21 +574,50 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>summarise(df, mean_col1 = mean(col1)) #仍是 table</td>
-<td>
-<p>df[[‘col1’]].mean() # series</p>
-<p>df[[‘col1’]].mean().to_frame(name = “mean_col1”) # dataframe</p>
-<p>df[[‘col1’]].agg(np.mean).to_frame(name = “mean_col1”)</p>
-<p>df.agg({‘col1’: np.mean}).to_frame(name = “mean_col1”)</p>
-</td>
+<td><pre><code>df %&gt;%
+  summarise(mean_col1 = mean(col1)) #仍是 table</code></pre></td>
+<td><pre><code># series
+df[['col1']].mean()
+
+# dataframe
+df[['col1']].mean()
+
+df[['col1']].mean() \
+  .to_frame(name = "mean_col1")
+
+df[['col1']].agg(np.mean) \
+  .to_frame(name = "mean_col1")
+
+df \
+  .agg({'col1': np.mean}) \
+  .to_frame(name = "mean_col1")</code></pre></td>
 </tr>
 <tr class="even">
-<td>summarise(df, mean_col1 = mean(col1), med_col1 = median(col1))</td>
-<td>df.agg({‘col1’: np.mean, ‘col2’: np.median}) #沒辦法命名了，格式是直的</td>
+<td><pre><code>df %&gt;%
+  summarise(
+    mean_col1 = mean(col1),
+    med_col1 = median(col1)
+  )</code></pre></td>
+<td><pre><code>df \
+  .agg(
+    {
+      'col1': np.mean,
+      'col2': np.median
+    }
+  ) #沒辦法命名了，格式是直的</code></pre></td>
 </tr>
 <tr class="odd">
-<td>summarise(df, mean(col1), mean(col2), median(col2))</td>
-<td>df.agg({‘col1’: np.mean, ‘col2’: [np.mean, np.median]}) # 格式變成 cross</td>
+<td><pre><code>df %&gt;%
+  summarise(
+    mean(col1),
+    mean(col2),
+    median(col2)
+  )</code></pre></td>
+<td><pre><code>df \
+  .agg({
+    'col1': np.mean,
+    'col2': [np.mean, np.median]
+  }) # 格式變成 cross</code></pre></td>
 </tr>
 <tr class="even">
 <td><pre><code>range2 = function(x){
@@ -416,14 +633,14 @@ df.agg([np.mean, np.median, range2])</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="對整張-table-的-各column-做-summarise" class="section level3" number="6.4.3">
+<div id="對整張-table-的-各column-做-summarise" class="section level3" number="6.6.3">
 <h3>
-<span class="header-section-number">6.4.3</span> 對整張 table 的 各column 做 summarise<a class="anchor" aria-label="anchor" href="#%E5%B0%8D%E6%95%B4%E5%BC%B5-table-%E7%9A%84-%E5%90%84column-%E5%81%9A-summarise"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.6.3</span> 對整張 table 的 各column 做 summarise<a class="anchor" aria-label="anchor" href="#%E5%B0%8D%E6%95%B4%E5%BC%B5-table-%E7%9A%84-%E5%90%84column-%E5%81%9A-summarise"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="52%">
-<col width="47%">
+<col width="50%">
+<col width="50%">
 </colgroup>
 <thead><tr class="header">
 <th>R</th>
@@ -444,11 +661,15 @@ df.agg([np.mean, np.median, range2])</code></pre></td>
 </tr>
 <tr class="even">
 <td>QQ</td>
-<td>df.agg([np.sum, np.median])</td>
+<td><pre><code>df.agg([np.sum, np.median])</code></pre></td>
 </tr>
 <tr class="odd">
-<td>df %&gt;% summarise(across(c(col1, col2), sum))</td>
-<td>df[[‘col1’, ‘col2’]].sum() # 2x1 series</td>
+<td><pre><code>df %&gt;%
+  summarise(
+    across(c(col1, col2), sum)
+  )</code></pre></td>
+<td><pre><code>df[['col1', 'col2']] \
+  .sum() # 2x1 series</code></pre></td>
 </tr>
 <tr class="even">
 <td></td>
@@ -457,9 +678,9 @@ df.agg([np.mean, np.median, range2])</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="group_by-summarise-1" class="section level3" number="6.4.4">
+<div id="group_by-summarise-1" class="section level3" number="6.6.4">
 <h3>
-<span class="header-section-number">6.4.4</span> group_by + summarise<a class="anchor" aria-label="anchor" href="#group_by-summarise-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.6.4</span> group_by + summarise<a class="anchor" aria-label="anchor" href="#group_by-summarise-1"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
@@ -477,7 +698,7 @@ df.agg([np.mean, np.median, range2])</code></pre></td>
 </tr>
 <tr class="even">
 <td>gdf2 = group_by(df, col1, col2)</td>
-<td>gdf2 = df.groupby([“col1”, “col2”]) # col1, col2 現在都是 index</td>
+<td>gdf2 = df.groupby(<span class="math display">\["col1", "col2"\]</span>) # col1, col2 現在都是 index</td>
 </tr>
 <tr class="odd">
 <td><pre><code>df %&gt;%
@@ -514,42 +735,175 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="group_by-mutate" class="section level3" number="6.4.5">
+<div id="group_by-mutate" class="section level3" number="6.6.5">
 <h3>
-<span class="header-section-number">6.4.5</span> group_by + mutate<a class="anchor" aria-label="anchor" href="#group_by-mutate"><i class="fas fa-link"></i></a>
-</h3>
-</div>
-<div id="group_by-filter" class="section level3" number="6.4.6">
-<h3>
-<span class="header-section-number">6.4.6</span> group_by + filter<a class="anchor" aria-label="anchor" href="#group_by-filter"><i class="fas fa-link"></i></a>
-</h3>
-</div>
-</div>
-<div id="others" class="section level2" number="6.5">
-<h2>
-<span class="header-section-number">6.5</span> others<a class="anchor" aria-label="anchor" href="#others"><i class="fas fa-link"></i></a>
-</h2>
-<div id="distinct-unique" class="section level3" number="6.5.1">
-<h3>
-<span class="header-section-number">6.5.1</span> distinct &amp; unique<a class="anchor" aria-label="anchor" href="#distinct-unique"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.6.5</span> group_by + mutate<a class="anchor" aria-label="anchor" href="#group_by-mutate"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="43%">
+<col width="56%">
+</colgroup>
+<thead><tr class="header">
+<th>dplyr</th>
+<th>pandas</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  group_by(a) %&gt;%
+  mutate(b = c + d)</code></pre></td>
+<td>QQ</td>
+</tr>
+<tr class="even">
+<td><pre><code>df %&gt;%
+  group_by(a) %&gt;%
+  mutate(b = (b - mean(b))/sd(b))</code></pre></td>
+<td>QQ</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><pre><code># 對 a 分組，normalize所有column
+df \
+  .groupby('a') \
+  .apply(lambda x: (x - x.mean())/x.std()) \
+  .reset_index()</code></pre></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="group_by-filter" class="section level3" number="6.6.6">
+<h3>
+<span class="header-section-number">6.6.6</span> group_by + filter<a class="anchor" aria-label="anchor" href="#group_by-filter"><i class="fas fa-link"></i></a>
+</h3>
+<div class="inline-table"><table style="width:90%;" class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="56%">
+</colgroup>
+<thead><tr class="header">
+<th>dplyr</th>
+<th>pandas</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  group_by(a) %&gt;%
+  filter(b &gt; 50)</code></pre></td>
+<td><pre><code>df \
+    .groupby("a") \
+    .apply(lambda x: x[x["b"]&gt;50])</code></pre></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="group_by-arrange" class="section level3" number="6.6.7">
+<h3>
+<span class="header-section-number">6.6.7</span> group_by + arrange<a class="anchor" aria-label="anchor" href="#group_by-arrange"><i class="fas fa-link"></i></a>
+</h3>
+<div class="inline-table"><table style="width:46%;" class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th>dplyr</th>
+<th>pandas</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><pre><code>df %&gt;%
+  group_by(a) %&gt;%
+  arrange(b)</code></pre></td>
+<td>QQ</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="group_by-slice" class="section level3" number="6.6.8">
+<h3>
+<span class="header-section-number">6.6.8</span> group_by + slice<a class="anchor" aria-label="anchor" href="#group_by-slice"><i class="fas fa-link"></i></a>
+</h3>
+<div class="inline-table"><table style="width:85%;" class="table table-sm">
+<colgroup>
+<col width="33%">
+<col width="51%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>dplyr</td>
+<td>pandas</td>
+</tr>
+<tr class="even">
+<td><pre><code>df %&gt;%
+  group_by(a) %&gt;%
+  slice(1:5)</code></pre></td>
+<td><pre><code>df \
+  .groupby(a) \
+  .head(5)
+
+df \
+  .groupby(a) \
+  .apply(lambda x: x.iloc[:5])</code></pre></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div id="others" class="section level2" number="6.7">
+<h2>
+<span class="header-section-number">6.7</span> others<a class="anchor" aria-label="anchor" href="#others"><i class="fas fa-link"></i></a>
+</h2>
+<div id="distinct-unique" class="section level3" number="6.7.1">
+<h3>
+<span class="header-section-number">6.7.1</span> distinct &amp; unique<a class="anchor" aria-label="anchor" href="#distinct-unique"><i class="fas fa-link"></i></a>
+</h3>
+<div class="inline-table"><table class="table table-sm">
+<colgroup>
+<col width="39%">
+<col width="60%">
+</colgroup>
 <thead><tr class="header">
 <th>dplyr</th>
 <th>Pandas</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>distinct(df, col1)</td>
-<td>df[[“col1”]].drop_duplicates()</td>
+<td><pre><code>df %&gt;%
+  distinct(col1)</code></pre></td>
+<td><pre><code># series
+df["col1"].drop_duplicates()
+# dataframe
+df[["col1"]].drop_duplicates()</code></pre></td>
 </tr>
 <tr class="even">
-<td>distinct(df, col1, col2)</td>
-<td>df[[“col1”, “col2”]].drop_duplicates()</td>
+<td><pre><code>df %&gt;%
+  distinct(col1, col2)</code></pre></td>
+<td><pre><code>df[["col1", "col2"]].drop_duplicates()</code></pre></td>
 </tr>
 <tr class="odd">
 <td>unique(df$col1)</td>
-<td>df[‘col1’].unique()</td>
+<td><pre><code>df['col1'].unique() # ndarray</code></pre></td>
 </tr>
 <tr class="even">
 <td></td>
@@ -558,9 +912,9 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="slice" class="section level3" number="6.5.2">
+<div id="slice" class="section level3" number="6.7.2">
 <h3>
-<span class="header-section-number">6.5.2</span> slice<a class="anchor" aria-label="anchor" href="#slice"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.7.2</span> slice<a class="anchor" aria-label="anchor" href="#slice"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <thead><tr class="header">
@@ -570,7 +924,7 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 <tbody>
 <tr class="odd">
 <td>slice(df, 1:10)</td>
-<td>df.iloc[0:9,:]</td>
+<td><code>df.iloc[0:9,:]</code></td>
 </tr>
 <tr class="even">
 <td></td>
@@ -579,9 +933,9 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="count" class="section level3" number="6.5.3">
+<div id="count" class="section level3" number="6.7.3">
 <h3>
-<span class="header-section-number">6.5.3</span> count<a class="anchor" aria-label="anchor" href="#count"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.7.3</span> count<a class="anchor" aria-label="anchor" href="#count"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <thead><tr class="header">
@@ -591,15 +945,15 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 <tbody>
 <tr class="odd">
 <td>count(df, col1)</td>
-<td>df[“col1”].value_counts()</td>
+<td><code>df["col1"].value_counts()</code></td>
 </tr>
 <tr class="even">
 <td>count(df, col1, col2)</td>
-<td>df[[“col1”,“col2”]].value_counts()</td>
+<td><code>df[["col1","col2"]].value_counts()</code></td>
 </tr>
 <tr class="odd">
 <td></td>
-<td>df[“col1”].value_counts(normalize = True)</td>
+<td><code>df["col1"].value_counts(normalize = True)</code></td>
 </tr>
 <tr class="even">
 <td></td>
@@ -608,11 +962,15 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="largestsmallest" class="section level3" number="6.5.4">
+<div id="largestsmallest" class="section level3" number="6.7.4">
 <h3>
-<span class="header-section-number">6.5.4</span> largest/smallest<a class="anchor" aria-label="anchor" href="#largestsmallest"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.7.4</span> largest/smallest<a class="anchor" aria-label="anchor" href="#largestsmallest"><i class="fas fa-link"></i></a>
 </h3>
-<div class="inline-table"><table class="table table-sm">
+<div class="inline-table"><table style="width:50%;" class="table table-sm">
+<colgroup>
+<col width="5%">
+<col width="44%">
+</colgroup>
 <thead><tr class="header">
 <th>R</th>
 <th>Python</th>
@@ -620,11 +978,17 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 <tbody>
 <tr class="odd">
 <td></td>
-<td>df.nlargest(n = 5, columns = ‘total_price’)</td>
+<td><pre><code>df.nlargest(
+  n = 5,
+  columns = 'total_price'
+)</code></pre></td>
 </tr>
 <tr class="even">
 <td></td>
-<td>df.nsmallest(n = 5, columns = ‘total_price’)</td>
+<td><pre><code>df.nsmallest(
+  n = 5,
+  columns = 'total_price'
+)</code></pre></td>
 </tr>
 <tr class="odd">
 <td></td>
@@ -633,9 +997,9 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="random-sampling-rows" class="section level3" number="6.5.5">
+<div id="random-sampling-rows" class="section level3" number="6.7.5">
 <h3>
-<span class="header-section-number">6.5.5</span> random sampling rows<a class="anchor" aria-label="anchor" href="#random-sampling-rows"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.7.5</span> random sampling rows<a class="anchor" aria-label="anchor" href="#random-sampling-rows"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <thead><tr class="header">
@@ -658,14 +1022,14 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="categorization" class="section level3" number="6.5.6">
+<div id="categorization" class="section level3" number="6.7.6">
 <h3>
-<span class="header-section-number">6.5.6</span> categorization<a class="anchor" aria-label="anchor" href="#categorization"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.7.6</span> categorization<a class="anchor" aria-label="anchor" href="#categorization"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="5%">
-<col width="94%">
+<col width="12%">
+<col width="87%">
 </colgroup>
 <thead><tr class="header">
 <th>R</th>
@@ -674,17 +1038,15 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 <tbody>
 <tr class="odd">
 <td></td>
-<td>
-<p>pd.cut(df[‘price’], bins = 3)</p>
-<p>pd.cut(df[‘price’], bins = 3, labels = [‘low’, ‘medium’, ‘high’])</p>
-</td>
+<td><pre><code>pd.cut(df['price'], bins = 3)
+
+pd.cut(df['price'], bins = 3, labels = ['low', 'medium', 'high'])</code></pre></td>
 </tr>
 <tr class="even">
 <td></td>
-<td>
-<p>pd.qcut(df[‘price’], q = [0, 0.25, 0.5, 0.75, 1])</p>
-<p>pd.qcut(df[‘price’], q = 4) #4等分</p>
-</td>
+<td><pre><code>pd.qcut(df['price'], q = [0, 0.25, 0.5, 0.75, 1])
+
+pd.qcut(df['price'], q = 4) #4等分</code></pre></td>
 </tr>
 <tr class="odd">
 <td></td>
@@ -693,9 +1055,9 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tbody>
 </table></div>
 </div>
-<div id="missing-data" class="section level3" number="6.5.7">
+<div id="missing-data" class="section level3" number="6.7.7">
 <h3>
-<span class="header-section-number">6.5.7</span> missing data<a class="anchor" aria-label="anchor" href="#missing-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.7.7</span> missing data<a class="anchor" aria-label="anchor" href="#missing-data"><i class="fas fa-link"></i></a>
 </h3>
 <div class="inline-table"><table class="table table-sm">
 <thead><tr class="header">
@@ -719,9 +1081,9 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </table></div>
 </div>
 </div>
-<div id="pivot-table" class="section level2" number="6.6">
+<div id="pivot-table" class="section level2" number="6.8">
 <h2>
-<span class="header-section-number">6.6</span> pivot table<a class="anchor" aria-label="anchor" href="#pivot-table"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.8</span> pivot table<a class="anchor" aria-label="anchor" href="#pivot-table"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li>pandas有個dplyr沒有的優點，就是他可以做excel的樞紐分析表<br>
@@ -749,154 +1111,86 @@ df.groupby("col1").agg({"col2": [np.mean, np.median]})</code></pre></td>
 </tr></tbody>
 </table></div>
 </div>
-<div id="loc-.iloc" class="section level2" number="6.7">
+<div id="字串相關的處理" class="section level2" number="6.9">
 <h2>
-<span class="header-section-number">6.7</span> .loc &amp; .iloc<a class="anchor" aria-label="anchor" href="#loc-.iloc"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.9</span> 字串相關的處理<a class="anchor" aria-label="anchor" href="#%E5%AD%97%E4%B8%B2%E7%9B%B8%E9%97%9C%E7%9A%84%E8%99%95%E7%90%86"><i class="fas fa-link"></i></a>
 </h2>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="57%">
-<col width="42%">
+<col width="44%">
+<col width="55%">
 </colgroup>
 <thead><tr class="header">
-<th>說明</th>
+<th>dplyr + stringr</th>
 <th>pandas</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>取[某列,某行]，得value (此時不再是df type)</td>
-<td>df.loc[“列名1”,“行名2”]</td>
+<td><pre><code># 篩選出 a 欄位有 "ist" 字串的列
+df %&gt;%
+  mutate(a = str_to_lower(a)) %&gt;%
+  filter(str_detect(a, "ist"))</code></pre></td>
+<td><pre><code># 篩選出 a 欄位有 "ist" 字串的列
+df[df['a'].str.lower().str.contains("ist")]</code></pre></td>
 </tr>
 <tr class="even">
-<td>若要維持df type，要加中括號</td>
-<td>df.loc[[“列名1”],[“行名2”]]</td>
+<td></td>
+<td></td>
 </tr>
 <tr class="odd">
-<td>取多個列，多個行</td>
-<td>df.loc[[“列名1”,“列名2”],[“行名2”,“行名2”]]</td>
+<td></td>
+<td></td>
 </tr>
 <tr class="even">
-<td>若要取多個列就好，行我全要</td>
-<td>
-<p>錯誤: df.loc[[列名1, 列名2], :]</p>
-<p>正確: df.loc[[列名1, 列名2]]</p>
-</td>
+<td></td>
+<td></td>
 </tr>
 <tr class="odd">
-<td>若要取多個行就好，列我全要</td>
-<td>df.loc[:, [行名1, 行名2]]</td>
-</tr>
-<tr class="even">
-<td>.iloc就是把列名全改成列數(0開始), 行名全改成行數(0開始)就好</td>
-<td>
-<p>df.iloc[0,2] # 返回value</p>
-<p>df.iloc[[0],[2]] # 返回df type</p>
-<p>df.iloc[[0,2], [0,1]] #多列多行</p>
-<p>df.iloc[[0,2]] # 多列</p>
-<p>df.iloc[:, [0,1]] # 多行</p>
-</td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table></div>
 </div>
-<div id="indexing-another-filter-arrange-method" class="section level2" number="6.8">
+<div id="離散化的處理" class="section level2" number="6.10">
 <h2>
-<span class="header-section-number">6.8</span> indexing (another filter &amp; arrange method)<a class="anchor" aria-label="anchor" href="#indexing-another-filter-arrange-method"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.10</span> 離散化的處理<a class="anchor" aria-label="anchor" href="#%E9%9B%A2%E6%95%A3%E5%8C%96%E7%9A%84%E8%99%95%E7%90%86"><i class="fas fa-link"></i></a>
 </h2>
-<ul>
-<li><p>簡單講，就是把某個column，設成row index，那接下來就可以用.loc[[列名1, 列名2]]來進行filter</p></li>
-<li><p>更特別的是，row index可以接受multi-column，所以當我們想篩選出類似實驗設計的多種treatment時(例如”A=1且B=2” 或 “A=2且B=3”)，特別適合用這種方式來篩選。</p></li>
-</ul>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="74%">
-<col width="25%">
+<col width="12%">
+<col width="87%">
 </colgroup>
 <thead><tr class="header">
-<th>說明</th>
-<th>pandas indexing</th>
+<th>dplyr + base</th>
+<th>pandas</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td></td>
-<td><pre><code># set a column as index
-df_ind = df.set_index("grade")
-# remove an index
-df_orig = df_ind.reset_index()</code></pre></td>
-</tr>
-<tr class="even">
-<td>filter(df, grade == “1”)</td>
-<td><pre><code>df_ind = df.set_index("grade")
-df_ind.loc["1"]</code></pre></td>
-</tr>
-<tr class="odd">
-<td>filter(df, grade %in% c(“1”, “3”))</td>
-<td><pre><code>df_ind = df.set_index("grade")
-df_ind.loc[["1", "3"]]</code></pre></td>
+<td><pre><code># 將數值變數a，切成三等分
+df.assign(a_cat = pd.cut(df['price'], bins = 3, labels = ['low', 'medium','high'))</code></pre></td>
 </tr>
 <tr class="even">
 <td></td>
-<td><pre><code>df_ind = df.set_index("grade","type")
-# subset inner level with tuple
-df_ind.loc[("1", "A"), ("3","C")]
-# subset only outer level with list
-df_ind.loc[["1","3"]]</code></pre></td>
+<td><pre><code># 將數值變數a，用我自定義的quantile，切成三等分
+df.assign(a_cat = pd.qcut(df['price'], q = q=[0, 0.33, 0.66, 1]), labels = ['low', 'medium','high'))</code></pre></td>
 </tr>
 <tr class="odd">
-<td>arrange(df, col1)</td>
-<td><pre><code>df_ind = df.set_index("col1")
-df_ind.sort_index()</code></pre></td>
-</tr>
-<tr class="even">
-<td>arrange(df, desc(col1))</td>
-<td><pre><code>df_ind = df.set_index("col1")
-df_ind.sort_index(ascending = False)</code></pre></td>
-</tr>
-<tr class="odd">
-<td>arrange(df, col1, desc(col2))</td>
-<td><pre><code>df_ind = df.set_index("col1", "col2")
-df_ind.sort_index(
-  level = ["col1","col2"],
-  ascending = [True, False]
-)</code></pre></td>
-</tr>
-<tr class="even">
-<td>排序後，取連續的列</td>
-<td>
-<p>錯誤: df.loc[[“列名2”:“列名7”]]</p>
-<p>正確: df.loc[“列名2”:“列名7”]</p>
-</td>
-</tr>
-<tr class="odd">
-<td>排序後，取連續的行</td>
-<td>
-<p>錯誤: df.loc[:, [“行名2”:“行名7”]]</p>
-<p>正確: df.loc[:, “行名2”:“行名7”]</p>
-</td>
-</tr>
-<tr class="even">
-<td>如果列名有兩個column(第一層叫outer, 第二層叫inner)，我想取連續的inner列，e.g. inner2~inner3，那我就要先照outer排序，再照inner排序，然後照右邊的寫法來取</td>
-<td>df.loc[(“outer1”, “inner2”):(“outer3”, “inner3”)]</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
 <td></td>
 <td></td>
 </tr>
 </tbody>
 </table></div>
 </div>
-<div id="combine-variables" class="section level2" number="6.9">
+<div id="combine-variables" class="section level2" number="6.11">
 <h2>
-<span class="header-section-number">6.9</span> Combine variables<a class="anchor" aria-label="anchor" href="#combine-variables"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.11</span> Combine variables<a class="anchor" aria-label="anchor" href="#combine-variables"><i class="fas fa-link"></i></a>
 </h2>
 <div class="inline-table"><table class="table table-sm">
 <colgroup>
-<col width="54%">
-<col width="45%">
+<col width="53%">
+<col width="46%">
 </colgroup>
 <thead><tr class="header">
 <th>dplyr</th>
@@ -925,7 +1219,7 @@ df_ind.sort_index(
 </tr>
 <tr class="even">
 <td>left_join(x, y, by = c(“col1”, “col2”)</td>
-<td>x.merge(y, how = “left”, on = [“col1”, “col2”])</td>
+<td>x.merge(y, how = “left”, on = <span class="math display">\["col1", "col2"\]</span>)</td>
 </tr>
 <tr class="odd">
 <td><pre><code>left_join(x, y,
@@ -944,9 +1238,9 @@ df_ind.sort_index(
 </tbody>
 </table></div>
 </div>
-<div id="combine-cases" class="section level2" number="6.10">
+<div id="combine-cases" class="section level2" number="6.12">
 <h2>
-<span class="header-section-number">6.10</span> Combine cases<a class="anchor" aria-label="anchor" href="#combine-cases"><i class="fas fa-link"></i></a>
+<span class="header-section-number">6.12</span> Combine cases<a class="anchor" aria-label="anchor" href="#combine-cases"><i class="fas fa-link"></i></a>
 </h2>
 <div class="inline-table"><table class="table table-sm">
 <thead><tr class="header">
@@ -979,40 +1273,44 @@ df_ind.sort_index(
 <li><a class="nav-link" href="#pandas_cheatsheet"><span class="header-section-number">6</span> pandas_cheatsheet</a></li>
 <li><a class="nav-link" href="#overview"><span class="header-section-number">6.1</span> overview</a></li>
 <li><a class="nav-link" href="#%E5%8F%96colnames-rownames-values"><span class="header-section-number">6.2</span> 取colnames, rownames, values</a></li>
+<li><a class="nav-link" href="#loc-.iloc"><span class="header-section-number">6.3</span> .loc &amp; .iloc</a></li>
+<li><a class="nav-link" href="#indexing-another-filter-arrange-method"><span class="header-section-number">6.4</span> indexing (another filter &amp; arrange method)</a></li>
 <li>
-<a class="nav-link" href="#selectfilterarrangemutate"><span class="header-section-number">6.3</span> select/filter/arrange/mutate</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#select"><span class="header-section-number">6.3.1</span> select</a></li>
-<li><a class="nav-link" href="#filter"><span class="header-section-number">6.3.2</span> filter</a></li>
-<li><a class="nav-link" href="#arrange"><span class="header-section-number">6.3.3</span> arrange</a></li>
-<li><a class="nav-link" href="#mutate-and-rename"><span class="header-section-number">6.3.4</span> mutate and rename</a></li>
+<a class="nav-link" href="#selectfilterarrangemutate"><span class="header-section-number">6.5</span> select/filter/arrange/mutate</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#select"><span class="header-section-number">6.5.1</span> select</a></li>
+<li><a class="nav-link" href="#filter"><span class="header-section-number">6.5.2</span> filter</a></li>
+<li><a class="nav-link" href="#arrange"><span class="header-section-number">6.5.3</span> arrange</a></li>
+<li><a class="nav-link" href="#mutate-and-rename"><span class="header-section-number">6.5.4</span> mutate and rename</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#group_by-summarise"><span class="header-section-number">6.4</span> group_by &amp; summarise</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#%E5%B0%8D-vectorseries-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E6%98%AF%E6%95%B8%E5%80%BC"><span class="header-section-number">6.4.1</span> 對 vector/series 做 summarise (結果是數值)</a></li>
-<li><a class="nav-link" href="#%E5%B0%8D-dataframe-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E4%BB%8D%E6%98%AFdf"><span class="header-section-number">6.4.2</span> 對 dataframe 做 summarise (結果仍是df)</a></li>
-<li><a class="nav-link" href="#%E5%B0%8D%E6%95%B4%E5%BC%B5-table-%E7%9A%84-%E5%90%84column-%E5%81%9A-summarise"><span class="header-section-number">6.4.3</span> 對整張 table 的 各column 做 summarise</a></li>
-<li><a class="nav-link" href="#group_by-summarise-1"><span class="header-section-number">6.4.4</span> group_by + summarise</a></li>
-<li><a class="nav-link" href="#group_by-mutate"><span class="header-section-number">6.4.5</span> group_by + mutate</a></li>
-<li><a class="nav-link" href="#group_by-filter"><span class="header-section-number">6.4.6</span> group_by + filter</a></li>
+<a class="nav-link" href="#group_by-summarise"><span class="header-section-number">6.6</span> group_by &amp; summarise</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#%E5%B0%8D-vectorseries-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E6%98%AF%E6%95%B8%E5%80%BC"><span class="header-section-number">6.6.1</span> 對 vector/series 做 summarise (結果是數值)</a></li>
+<li><a class="nav-link" href="#%E5%B0%8D-dataframe-%E5%81%9A-summarise-%E7%B5%90%E6%9E%9C%E4%BB%8D%E6%98%AFdf"><span class="header-section-number">6.6.2</span> 對 dataframe 做 summarise (結果仍是df)</a></li>
+<li><a class="nav-link" href="#%E5%B0%8D%E6%95%B4%E5%BC%B5-table-%E7%9A%84-%E5%90%84column-%E5%81%9A-summarise"><span class="header-section-number">6.6.3</span> 對整張 table 的 各column 做 summarise</a></li>
+<li><a class="nav-link" href="#group_by-summarise-1"><span class="header-section-number">6.6.4</span> group_by + summarise</a></li>
+<li><a class="nav-link" href="#group_by-mutate"><span class="header-section-number">6.6.5</span> group_by + mutate</a></li>
+<li><a class="nav-link" href="#group_by-filter"><span class="header-section-number">6.6.6</span> group_by + filter</a></li>
+<li><a class="nav-link" href="#group_by-arrange"><span class="header-section-number">6.6.7</span> group_by + arrange</a></li>
+<li><a class="nav-link" href="#group_by-slice"><span class="header-section-number">6.6.8</span> group_by + slice</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#others"><span class="header-section-number">6.5</span> others</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#distinct-unique"><span class="header-section-number">6.5.1</span> distinct &amp; unique</a></li>
-<li><a class="nav-link" href="#slice"><span class="header-section-number">6.5.2</span> slice</a></li>
-<li><a class="nav-link" href="#count"><span class="header-section-number">6.5.3</span> count</a></li>
-<li><a class="nav-link" href="#largestsmallest"><span class="header-section-number">6.5.4</span> largest/smallest</a></li>
-<li><a class="nav-link" href="#random-sampling-rows"><span class="header-section-number">6.5.5</span> random sampling rows</a></li>
-<li><a class="nav-link" href="#categorization"><span class="header-section-number">6.5.6</span> categorization</a></li>
-<li><a class="nav-link" href="#missing-data"><span class="header-section-number">6.5.7</span> missing data</a></li>
+<a class="nav-link" href="#others"><span class="header-section-number">6.7</span> others</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#distinct-unique"><span class="header-section-number">6.7.1</span> distinct &amp; unique</a></li>
+<li><a class="nav-link" href="#slice"><span class="header-section-number">6.7.2</span> slice</a></li>
+<li><a class="nav-link" href="#count"><span class="header-section-number">6.7.3</span> count</a></li>
+<li><a class="nav-link" href="#largestsmallest"><span class="header-section-number">6.7.4</span> largest/smallest</a></li>
+<li><a class="nav-link" href="#random-sampling-rows"><span class="header-section-number">6.7.5</span> random sampling rows</a></li>
+<li><a class="nav-link" href="#categorization"><span class="header-section-number">6.7.6</span> categorization</a></li>
+<li><a class="nav-link" href="#missing-data"><span class="header-section-number">6.7.7</span> missing data</a></li>
 </ul>
 </li>
-<li><a class="nav-link" href="#pivot-table"><span class="header-section-number">6.6</span> pivot table</a></li>
-<li><a class="nav-link" href="#loc-.iloc"><span class="header-section-number">6.7</span> .loc &amp; .iloc</a></li>
-<li><a class="nav-link" href="#indexing-another-filter-arrange-method"><span class="header-section-number">6.8</span> indexing (another filter &amp; arrange method)</a></li>
-<li><a class="nav-link" href="#combine-variables"><span class="header-section-number">6.9</span> Combine variables</a></li>
-<li><a class="nav-link" href="#combine-cases"><span class="header-section-number">6.10</span> Combine cases</a></li>
+<li><a class="nav-link" href="#pivot-table"><span class="header-section-number">6.8</span> pivot table</a></li>
+<li><a class="nav-link" href="#%E5%AD%97%E4%B8%B2%E7%9B%B8%E9%97%9C%E7%9A%84%E8%99%95%E7%90%86"><span class="header-section-number">6.9</span> 字串相關的處理</a></li>
+<li><a class="nav-link" href="#%E9%9B%A2%E6%95%A3%E5%8C%96%E7%9A%84%E8%99%95%E7%90%86"><span class="header-section-number">6.10</span> 離散化的處理</a></li>
+<li><a class="nav-link" href="#combine-variables"><span class="header-section-number">6.11</span> Combine variables</a></li>
+<li><a class="nav-link" href="#combine-cases"><span class="header-section-number">6.12</span> Combine cases</a></li>
 </ul>
 
       <div class="book-extra">
@@ -1030,7 +1328,7 @@ df_ind.sort_index(
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Data Science Tutorial</strong>" was written by Hank Lee. It was last built on 2022-01-14.</p>
+    <p>"<strong>Data Science Tutorial</strong>" was written by Hank Lee. It was last built on 2022-01-15.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
